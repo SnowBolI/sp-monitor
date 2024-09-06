@@ -7,7 +7,12 @@
     </div>
     @endif
 
-    <a href="{{ route('supervisor.nasabah.cetak-pdf', ['search' => request('search')]) }}" target="_blank">Cetak PDF</a>
+    <a href="{{ route('supervisor.nasabah.cetak-pdf', [
+        'search' => request('search'),
+        'cabang_filter' => request('cabang_filter'),
+        'wilayah_filter' => request('wilayah_filter'),
+        'ao_filter' => request('ao_filter'),
+    ]) }}" target="_blank">Cetak PDF</a>
         <div>
             <form method="GET" action="{{ route('supervisor.dashboard') }}">
                 <select name="date_filter" onchange="this.form.submit()"

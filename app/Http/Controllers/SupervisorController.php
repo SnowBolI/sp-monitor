@@ -336,6 +336,47 @@ public function addSurat(Request $request)
         return redirect()->back()->with('error', 'Failed to add data');
     }
 }
+public function cetakPdf(Request $request)
+{
+    $accountOfficer = User::where('jabatan_id', 5)->get();
+    $query = SuratPeringatan::with('nasabah', 'accountOfficer');
+    $query->whereHas('nasabah', function ($q) {
+        $q->where('id_cabang', auth()->user()->id_cabang);
+    });
+    $query->whereHas('nasabah', function ($q) {
+        $q->where('id_kantorkas', auth()->user()->id_kantorkas);
+    });
+    $title = 'Laporan Surat Peringatan';
+
+    // Terapkan filter dari request
+    if ($request->has('search')) {
+        $search = $request->input('search');
+        $query->whereHas('nasabah', function ($q) use ($search) {
+            $q->where('nama', 'like', '%' . $search . '%');
+        });
+    }
+    if ($request->has('ao_filter')) {
+        $aoFilter = $request->input('ao_filter');
+        $query->whereHas('accountOfficer', function ($query) use ($aoFilter) {
+            $query->where('name', $aoFilter);
+        });
+    }
+
+    $suratPeringatans = $query->get();
+
+    // Handle jika tidak ada data yang ditemukan
+    if ($suratPeringatans->isEmpty()) {
+        return redirect()->back()->with('error', 'Tidak ada data surat peringatan yang ditemukan.');
+    }
+
+    $options = new Options();
+    $options->set('defaultFont', 'DejaVu Sans'); 
+
+    $dompdf = new Dompdf($options);
+    $dompdf->loadHtml(view('surat_peringatan_pdf', compact('suratPeringatans','title'))->render());
+    $dompdf->render();
+    return $dompdf->stream('surat_peringatan_hasil_pencarian.pdf');
+}
 
 public function addNasabah(Request $request)
 {
