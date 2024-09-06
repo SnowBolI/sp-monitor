@@ -149,14 +149,14 @@ public function cetakPdf(Request $request)
     if ($request->has('kantorkas_filter')) {
         $kantorkasFilter = $request->input('kantorkas_filter');
         // Sesuaikan dengan relasi atau kolom yang sesuai di model Anda
-        $query->where('id_kantorkas', $kantorkasFilter); 
+        $query->whereHas('nasabah', function ($q) use ($kantorkasFilter) {
+            $q->where('id_kantorkas', $kantorkasFilter); 
+        }); 
     }
     if ($request->has('ao_filter')) {
         $aoFilter = $request->input('ao_filter');
-        $query->where('id_account_officer', function ($query) use ($aoFilter) {
-            $query->select('id')
-                  ->from('users')
-                  ->where('name', $aoFilter);
+        $query->whereHas('accountOfficer', function ($query) use ($aoFilter) {
+            $query->where('name', $aoFilter);
         });
     }
 

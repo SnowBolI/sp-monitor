@@ -60,7 +60,9 @@ class UserSeeder extends Seeder
                 'name' => $faker->name,
                 'email' => $faker->unique()->email,
                 'password' => bcrypt('password'),
-                'jabatan_id' => $jabatanId
+                'jabatan_id' => $jabatanId,
+                'id_cabang' => rand(1,3),
+                'id_kantorkas' => rand(1,3)
             ]);
 
             // Tambahkan count untuk jabatan_id yang dipilih
