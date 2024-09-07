@@ -199,14 +199,6 @@
                         <label for="addKeterangan">Keterangan</label>
                         <textarea class="form-control" id="addKeterangan" name="keterangan" required></textarea>
                     </div>
-                    <!-- <div class="form-group">
-                        <label for="addTtd">TTD</label>
-                        <input type="datetime-local" class="form-control" id="addTtd" name="ttd">
-                    </div>
-                    <div class="form-group">
-                        <label for="addKembali">Kembali</label>
-                        <input type="datetime-local" class="form-control" id="addKembali" name="kembali">
-                    </div> -->
                     <div class="form-group">
                         <label for="addCabang">Cabang</label>
                         <input type="text" class="form-control" id="addCabang" name="id_cabang" 
@@ -354,14 +346,6 @@
                         <textarea class="form-control" id="editKeterangan" name="keterangan" required></textarea>
                     </div>
                     <div class="form-group">
-                        <label for="editTtd">TTD</label>
-                        <input type="datetime-local" class="form-control" id="editTtd" name="ttd" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="editKembali">Kembali</label>
-                        <input type="datetime-local" class="form-control" id="editKembali" name="kembali" required>
-                    </div>
-                    <div class="form-group">
                         <label for="editCabang">Cabang</label>
                         <select class="form-control" id="editCabang" name="id_cabang" required>
                             @foreach($cabangs as $cabang)
@@ -387,8 +371,8 @@
                     </div>
                     <input type="hidden" name="id_admin_kas" value="{{ auth()->user()->id }}">
                     <div class="form-group">
-                        <label for="admin_kas">Admin Kas</label>
-                        <input type="text" id="admin_kas" value="{{ auth()->user()->name }}" readonly>
+                        <label for="admin_kas"></label>
+                        <input type="hidden" id="admin_kas" value="{{ auth()->user()->name }}" readonly>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -439,14 +423,6 @@
                 <div class="form-group">
                     <label for="detailKeterangan">Keterangan</label>
                     <textarea class="form-control" id="detailKeterangan" name="keterangan" readonly></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="detailTtd">TTD</label>
-                    <input type="datetime-local" class="form-control" id="detailTtd" name="ttd" readonly>
-                </div>
-                <div class="form-group">
-                    <label for="detailKembali">Kembali</label>
-                    <input type="datetime-local" class="form-control" id="detailKembali" name="kembali" readonly>
                 </div>
                 <div class="form-group">
                     <label for="detailCabang">Cabang</label>

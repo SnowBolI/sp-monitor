@@ -240,10 +240,14 @@ public function cetakPdf(Request $request)
     }
 
     $options = new Options();
-    $options->set('defaultFont', 'DejaVu Sans'); 
+    $options->set('isRemoteEnabled', true);
+
+    $logoPath = public_path('logobank.png'); 
+    $logoData = base64_encode(file_get_contents($logoPath));
+    $logoSrc = 'data:image/png;base64,' . $logoData;
 
     $dompdf = new Dompdf($options);
-    $dompdf->loadHtml(view('surat_peringatan_pdf', compact('suratPeringatans','title'))->render());
+    $dompdf->loadHtml(view('surat_peringatan_pdf', compact('suratPeringatans','title','logoSrc'))->render());
     $dompdf->render();
     return $dompdf->stream('surat_peringatan_hasil_pencarian.pdf');
 }
