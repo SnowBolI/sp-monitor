@@ -38,6 +38,7 @@
                             @endguest
                         </ul>
                     </nav>
+                    <div class="navbar-underline"></div>
                 </div>
             </div>
         </div>
