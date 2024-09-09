@@ -7,13 +7,14 @@
     </div>
     @endif
 
-    <a href="{{ route('supervisor.nasabah.cetak-pdf', [
-        'search' => request('search'),
-        'cabang_filter' => request('cabang_filter'),
-        'wilayah_filter' => request('wilayah_filter'),
-        'ao_filter' => request('ao_filter'),
-    ]) }}" target="_blank">Cetak PDF</a>
-        <div>
+    <button class="btn btn-primary mb-3" onclick="window.open('{{ route('direksi.nasabah.cetak-pdf', [
+    'search' => request('search'),
+    'cabang_filter' => request('cabang_filter'),
+    'wilayah_filter' => request('wilayah_filter'),
+    'ao_filter' => request('ao_filter'),
+]) }}', '_blank')">
+    <i class="fas fa-print"></i> Cetak PDF</button>
+        <div class="mb-2">
             <form method="GET" action="{{ route('supervisor.dashboard') }}">
                 <select name="date_filter" onchange="this.form.submit()"
                     class="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-4 py-2 rounded">
@@ -34,24 +35,6 @@
                 <input type="text" id="search" name="search" value="{{ request('search') }}"
                     placeholder="Search by name, branch, region"
                     class="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-4 py-2 rounded">
-
-                <select name="cabang_filter" onchange="this.form.submit()"
-                    class="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-4 py-2 rounded">
-                    <option value="">Cabang</option>
-                    @foreach($cabangs as $cabang)
-                    <option value="{{ $cabang->id_cabang }}" {{ request('cabang_filter')==$cabang->id_cabang ?
-                        'selected' : '' }}>{{ $cabang->nama_cabang }}</option>
-                    @endforeach
-                </select>
-
-                <select name="wilayah_filter" onchange="this.form.submit()"
-                    class="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-4 py-2 rounded">
-                    <option value="">Kantor Kas</option>
-                    @foreach($kantorkas as $wilayah)
-                    <option value="{{ $wilayah->id_kantorkas }}" {{ request('wilayah_filter')==$wilayah->id_kantorkas ?
-                        'selected' : '' }}>{{ $wilayah->nama_kantorkas }}</option>
-                    @endforeach
-                </select>
                 <select name="ao_filter" onchange="this.form.submit()"
                     class="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-4 py-2 rounded">
                     <option value="">Account Officer</option>

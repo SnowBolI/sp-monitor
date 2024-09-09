@@ -7,14 +7,15 @@
     </div>
     @endif
 
-<a href="{{ route('kepala-cabang.nasabah.cetak-pdf', [
-        'search' => request('search'),
-        'cabang_filter' => request('cabang_filter'),
-        'wilayah_filter' => request('wilayah_filter'),
-        'ao_filter' => request('ao_filter'),
-    ]) }}" target="_blank">Cetak PDF</a>
+    <button class="btn btn-primary mb-3" onclick="window.open('{{ route('direksi.nasabah.cetak-pdf', [
+    'search' => request('search'),
+    'cabang_filter' => request('cabang_filter'),
+    'wilayah_filter' => request('wilayah_filter'),
+    'ao_filter' => request('ao_filter'),
+]) }}', '_blank')">
+    <i class="fas fa-print"></i> Cetak PDF</button>
     <div class="flex justify-between mb-4">
-        <div>
+    <div class="mb-2">
             <form method="GET" action="{{ route('kepala-cabang.dashboard') }}">
                 <select name="date_filter" onchange="this.form.submit()"
                     class="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-4 py-2 rounded">

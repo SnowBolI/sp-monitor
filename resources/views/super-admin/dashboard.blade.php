@@ -8,7 +8,7 @@
     @endif
 
     <div class="flex justify-between mb-4">
-        <div>
+    <div class="mb-2">
             <form method="GET" action="{{ route('super-admin.dashboard') }}">
                 <select name="date_filter" onchange="this.form.submit()"
                         class="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-4 py-2 rounded">

@@ -181,7 +181,7 @@ public function cetakPdf(Request $request)
 }
 
 //     public function dashboard(Request $request)
-// {
+// { 
 //     Log::info('Memasuki fungsi dashboard');
 
 //     $title = "Dashboard";

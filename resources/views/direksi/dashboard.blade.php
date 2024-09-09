@@ -1,21 +1,22 @@
 @extends("layouts.master")
 @section("main-content")
-<div class="container home">
+<div class="dashboard-container">
     @if (session("success"))
     <div class="alert alert-success">
         {{session("success") }}
     </div>
     @endif
 
-    <a href="{{ route('direksi.nasabah.cetak-pdf', [
-        'search' => request('search'),
-        'cabang_filter' => request('cabang_filter'),
-        'wilayah_filter' => request('wilayah_filter'),
-        'ao_filter' => request('ao_filter'),
-    ]) }}" target="_blank">Cetak PDF</a>
+    <button class="btn btn-primary mb-3" onclick="window.open('{{ route('direksi.nasabah.cetak-pdf', [
+    'search' => request('search'),
+    'cabang_filter' => request('cabang_filter'),
+    'wilayah_filter' => request('wilayah_filter'),
+    'ao_filter' => request('ao_filter'),
+]) }}', '_blank')">
+    <i class="fas fa-print"></i> Cetak PDF</button>
     <!-- <button class="btn btn-success mb-3" data-toggle="modal" data-target="#addModal">Tambah Nasabah</button> -->
     <div class="flex justify-between mb-4">
-        <div>
+        <div class="mb-2">
             <form method="GET" action="{{ route('direksi.dashboard') }}">
                 <select name="date_filter" onchange="this.form.submit()"
                     class="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-4 py-2 rounded">
@@ -646,6 +647,22 @@
     // Attach events for calculating total on input change
     $('#addPokok, #addBunga, #addDenda').on('input', calculateAddTotal);
     $('#editPokok, #editBunga, #editDenda').on('input', calculateEditTotal);
+    document.getElementById("menuButton").onclick = function() {
+  document.getElementById("menuDropdown").classList.toggle("show");
+}
+
+// Close the dropdown if the user clicks outside of it
+window.onclick = function(event) {
+  if (!event.target.matches('.menu-button')) {
+    var dropdowns = document.getElementsByClassName("menu-dropdown");
+    for (var i = 0; i < dropdowns.length; i++) {
+      var openDropdown = dropdowns[i];
+      if (openDropdown.classList.contains('show')) {
+        openDropdown.classList.remove('show');
+      }
+    }
+  }
+}
 </script>
 
 @endsection

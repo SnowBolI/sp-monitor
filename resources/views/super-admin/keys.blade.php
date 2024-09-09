@@ -27,7 +27,6 @@
             <tr>
             <td>{{ $key->key }}</td>
             <td>{{ $key->jabatannama->nama_jabatan }}</td>
-            <td>
             <button class="btn btn-danger btn-sm delete-btn" data-key="{{ $key->key }}" data-toggle="modal" data-target="#deleteModal">Delete</button></td>
             </tr>
         @endforeach

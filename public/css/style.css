@@ -126,17 +126,40 @@ ul {
         font-family: sans-serif; /* Pilih font yang mudah dibaca */
     }
 
+    .dashboard-container {
+        margin-top: 20px; /* Existing margin */
+        width: 100%; 
+        max-width: 1250px; /* Adjust this as needed */
+        margin-left: auto; /* Center the container horizontally */
+        margin-right: auto;
+        padding-left: 20px; /* Add left padding if needed */
+        padding-right: 20px; /* Add right padding if needed */
+    }
+
+    
+
     .container {
-        margin-top: 20px; /* Beri jarak antara navbar dan konten */
+        margin-top: 0px; /* Beri jarak antara navbar dan konten */
+        width: 100%;
+        max-width: 100%;
+        padding-left: 0;
+        padding-right: 0;
     }
 
     .navbar {
-        padding: 15px; /* Sesuaikan padding navbar */
+        padding: 0; /* Sesuaikan padding navbar */
     }
 
-    .navbar-brand {
-        font-weight: bold;
+    .navbar_inner {
+        background-color: #38A34B;
+        padding: 5px;
+        margin-top: 0p;
     }
+    
+    .navbar-brand {
+    color: white;
+    padding: 10px 15px;
+}
 
     .nav-link {
         margin-left: 15px; /* Beri jarak antar item navigasi */
@@ -204,3 +227,101 @@ ul {
         border-color: #80bdff; /* Perubahan warna saat fokus */
         box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
     }
+
+    #nasabah-table {
+        border-collapse: collapse; /* This ensures borders don't overlap */
+        width: 100%; /* Make the table take up full width if needed */
+    }
+    
+    #nasabah-table th, #nasabah-table td {
+        border: 1px solid black; /* Add a light gray border */
+        padding: 8 px; /* Add some padding for better readability */
+        text-align: left; /* Align text to the left */
+    }
+    
+    #nasabah-table th {
+        background-color: #f2f2f2; /* Add a light background to table headers */
+    }
+
+    .custom-pdf-button {
+        background-color: #007bff;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-bottom: 15px;
+    }
+    
+    .custom-pdf-button:hover {
+        background-color: #0056b3;
+    }
+
+    .user-menu {
+  display: flex;
+  align-items: center;
+  color: white;
+  justify-content: flex-end;
+  padding: 10px 20px;
+}
+
+.welcome-text {
+  margin-right: 15px;
+  font-size: 14px;
+  color: #333;
+}
+
+.menu-container {
+  position: relative;
+}
+
+.menu-button {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+.menu-button:hover {
+  background-color: #0056b3;
+}
+
+.menu-dropdown {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background-color: white;
+  min-width: 200px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.menu-item {
+  color: #333;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.3s;
+}
+
+.menu-item:hover {
+  background-color: #f1f1f1;
+}
+
+.menu-item i {
+  margin-right: 10px;
+  font-size: 16px;
+}
+
+.show {
+  display: block;
+}
+
