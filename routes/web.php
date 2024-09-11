@@ -118,6 +118,7 @@ Route::prefix('admin-kas')
         Route::post('nasabah/add', [AdminKasController::class, 'addNasabah'])->name('nasabah.add');
         Route::delete('nasabah/delete/{no}', [AdminKasController::class, 'deleteNasabah'])->name('nasabah.delete');
         Route::post('/nasabah/surat', [AdminKasController::class, 'addSurat'])->name('nasabah.surat');
+        Route::post('/nasabah/import', [AdminKasController::class, 'importNasabah'])->name('nasabah.import');
 
 
     });

@@ -1,6 +1,6 @@
 @extends("layouts.master")
 @section("main-content")
-<div class="container home">
+<div class="dashboard-container">
     @if (session("success"))
     <div class="alert alert-success">
         {{session("success") }}
@@ -86,6 +86,22 @@
     var id_cabang = $(this).data('id_cabang'); 
     $('#deleteForm').attr('action', '/super-admin/cabang/delete/' + id_cabang); 
 });
+document.getElementById("menuButton").onclick = function() {
+  document.getElementById("menuDropdown").classList.toggle("show");
+}
+
+// Close the dropdown if the user clicks outside of it
+window.onclick = function(event) {
+  if (!event.target.matches('.menu-button')) {
+    var dropdowns = document.getElementsByClassName("menu-dropdown");
+    for (var i = 0; i < dropdowns.length; i++) {
+      var openDropdown = dropdowns[i];
+      if (openDropdown.classList.contains('show')) {
+        openDropdown.classList.remove('show');
+      }
+    }
+  }
+}
 
 </script>
 

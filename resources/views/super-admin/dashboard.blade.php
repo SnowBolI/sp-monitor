@@ -1,6 +1,6 @@
 @extends("layouts.master")
 @section("main-content")
-<div class="container home">
+<div class="dashboard-container">
     @if (session("success"))
     <div class="alert alert-success">
         {{session("success") }}
@@ -206,7 +206,7 @@
 });
 
 document.getElementById("menuButton").onclick = function() {
-    document.getElementById("menuDropdown").classList.toggle("show");
+document.getElementById("menuDropdown").classList.toggle("show");
 }
 
 // Close the dropdown if the user clicks outside of it

@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Models\Nasabah;
 use App\Models\PegawaiAccountOffice;
+use App\Imports\NasabahImport;
+use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Models\SuratPeringatan;
 use App\Models\Cabang;
 use App\Models\KantorKas;
@@ -407,4 +410,22 @@ public function addNasabah(Request $request)
     }
 }
 
+public function importNasabah(Request $request)
+{
+    // dd($request->all());
+    $request->validate([
+        'file' => 'required|mimes:xlsx,xls',
+    ]);
+
+    try {
+        $idAdminKas = auth()->user()->id; // Get the ID of the logged-in user directly
+        Log::info('Admin Kas Detected', ['id_admin_kas' => $idAdminKas]);
+
+        Excel::import(new NasabahImport($idAdminKas), $request->file('file'));
+
+        return redirect()->back()->with('success', 'Data berhasil diimport!');
+    } catch (\Exception $e) {
+        return redirect()->back()->with('error', 'Terjadi kesalahan saat import: ' . $e->getMessage());
+    }
+}
 }

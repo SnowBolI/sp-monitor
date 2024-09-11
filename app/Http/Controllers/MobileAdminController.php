@@ -42,7 +42,7 @@ class MobileAdminController extends Controller
             'cabang',
             'kantorkas',
 
-        ]);
+        ])->orderBy('updated_at', 'desc');//ini
 
         if ($request->has('search')) {
             $search = $request->search;
@@ -72,22 +72,12 @@ class MobileAdminController extends Controller
             Log::info('Transforming user', ['user' => $user]);
             Log::info('User status', ['status' => $user->status]);
             $cabang = $user->cabang ? $user->cabang : null;
-                    // ($user->pegawaiSupervisor ? $user->pegawaiSupervisor->cabang :
-                    // ($user->pegawaiAdminKas ? $user->pegawaiAdminKas->cabang :
-                    // ($user->pegawaiAccountOfficer ? $user->pegawaiAccountOfficer->cabang : null)));
+
 
             $kantorkas = 
                  
                     $user->kantorkas ? $user->kantorkas : null;
-                    // ($user->pegawaiAdminKas ? $user->pegawaiAdminKas->wilayah :
-                    // ($user->pegawaiAccountOfficer ? $user->pegawaiAccountOfficer->wilayah : null));
-
-            // $direksi = $user->pegawaiKepalaCabang ? $user->pegawaiKepalaCabang->direksi :null;
-            // $kepalaCabang = $user->pegawaiSupervisor ? $user->pegawaiSupervisor->kepalaCabang :null;
-            // $superVisor = $user->pegawaiAdminKas ? $user->pegawaiAdminKas->supervisor :null;
-            // $adminKas = $user->pegawaiAccountOfficer ? $user->pegawaiAccountOfficer->adminKas :null;
-            // $status = $user->status ? $user->status : null;
-            // $statuus = $user->infostatus ? $user->infostatus->infostatus :null;
+          
 
             return [
                 'id' => $user->id,
@@ -99,14 +89,6 @@ class MobileAdminController extends Controller
                 'id_cabang' => $cabang ? $cabang->id_cabang : null,
                 'kantorkas' => $kantorkas ? $kantorkas->nama_kantorkas : null,
                 'id_kantorkas' => $kantorkas ? $kantorkas->id_kantorkas : null,
-                // 'id_direksi' => $direksi ? $direksi->nama : null,
-                // 'direksi_id' => $direksi ? $direksi->id_direksi : null,
-                // 'id_kepala_cabang' => $kepalaCabang ? $kepalaCabang->nama_kepala_cabang : null,
-                // 'kepalacabang_id' => $kepalaCabang ? $kepalaCabang->id_kepala_cabang : null,
-                // 'id_supervisor' => $superVisor ? $superVisor->nama_supervisor : null,
-                // 'supervisor_id' => $superVisor ? $superVisor->id_supervisor : null,
-                // 'id_admin_kas' => $adminKas ? $adminKas->nama_admin_kas : null,
-                // 'adminkas_id' => $adminKas ? $adminKas->id_admin_kas : null,
                 'status' => $user->infostatus ? $user->infostatus->nama_status : null,
                 'status_id' => $user->infostatus ? $user->infostatus->id : null,
 

@@ -1,6 +1,6 @@
 @extends("layouts.master")
 @section("main-content")
-<div class="container home">
+<div class="dashboard-container">
     @if (session("success"))
     <div class="alert alert-success">
         {{session("success") }}
@@ -8,6 +8,12 @@
     @endif
 
     <button class="btn btn-success mb-3" data-toggle="modal" data-target="#addModal">Tambah Nasabah</button>
+    <form action="{{ route('admin-kas.nasabah.import') }}" method="POST" enctype="multipart/form-data">
+    @csrf
+    <input type="file" name="file" accept=".xlsx, .xls">
+    <button type="submit" class="btn btn-primary">Import Excel</button>
+    </form>
+
     <div class="flex justify-between mb-4">
     <div class="mb-2">
             <form method="GET" action="{{ route('admin-kas.dashboard') }}">
