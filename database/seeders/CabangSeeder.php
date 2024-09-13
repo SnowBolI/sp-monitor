@@ -15,9 +15,12 @@ class CabangSeeder extends Seeder
     {
         //
         DB::table('cabangs')->insert([
-            ['nama_cabang' => 'Nganjuk'],
-            ['nama_cabang' => 'Madiun'],
-            ['nama_cabang' => 'Ponorogo'],
+            ['nama_cabang' => 'Kantor Cabang Utama'],
+            ['nama_cabang' => 'Kantor Cabang Nganjuk'],
+            ['nama_cabang' => 'Kantor Cabang Madiun'],
+            ['nama_cabang' => 'Kantor Cabang Ponorogo'],
+            ['nama_cabang' => 'Kantor Cabang Trenggalek'],
+            ['nama_cabang' => 'Kantor Cabang Ngawi'],
         ]);
     }
 }

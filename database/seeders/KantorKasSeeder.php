@@ -15,10 +15,21 @@ class KantorKasSeeder extends Seeder
     {
         //
         DB::table('kantorkas')->insert([
-            ['nama_kantorkas' => 'Dolopo'],
-            ['nama_kantorkas' => 'Jiwan'],
-            ['nama_kantorkas' => 'Sumotoro'],
-            ['nama_kantorkas' => 'Rejoso'],
+            ['nama_kantorkas' => 'Kantor Kas Karangrejo'],
+            ['nama_kantorkas' => 'Kantor Kas Barat'],
+            ['nama_kantorkas' => 'Kantor Kas Magetan'],
+            ['nama_kantorkas' => 'Kantor Kas Ngariboyo'],
+            ['nama_kantorkas' => 'Kantor Kas Takeran'],
+            ['nama_kantorkas' => 'Kantor Kas Bendo'],
+            ['nama_kantorkas' => 'Kantor Kas Maospati'],
+            ['nama_kantorkas' => 'Kantor Kas Karas'],
+            ['nama_kantorkas' => 'Kantor Kas Panekan'],
+            ['nama_kantorkas' => 'Kantor Kas Lembeyan'],
+            ['nama_kantorkas' => 'Kantor Kas Parang'],
+            ['nama_kantorkas' => 'Kantor Kas Rejoso'],
+            ['nama_kantorkas' => 'Kantor Kas Jiwan'],
+            ['nama_kantorkas' => 'Kantor Kas Dolopo'],
+            ['nama_kantorkas' => 'Kantor Kas Sumotoro'],
         ]);
     }
 }
