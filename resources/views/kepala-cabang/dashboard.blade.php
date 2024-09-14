@@ -70,6 +70,7 @@
                 <th>Keterangan</th>
                 <th>Progres SP</th>
                 <th>Aksi</th>
+                <th>Created At</th>
             </tr>
         </thead>
         <tbody>
@@ -146,6 +147,7 @@
             <button class="btn btn-info btn-sm detail-btn" data-no="{{ $nasabah->no }}" data-toggle="modal"
                 data-target="#detailModal">Detail</button>
         </td>
+        <td>{{ $nasabah->created_at }}</td>
     </tr>
     @endforeach
     </table>
@@ -494,25 +496,22 @@
     </div>
 </div> -->
 
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script> 
+<script src="https://cdn.datatables.net/2.1.6/js/dataTables.js" defer></script>
 <script>
-    $(document).ready(function() {
-        // Inisialisasi Select2
-        try {
-            $('#ao_filter_select').select2({
-                placeholder: "Pilih Account Officer",
-                allowClear: true // Mengizinkan pengguna untuk menghapus pilihan
-            });
-
-            $('#ao_filter_select').on('change', function() {
-                this.form.submit();
-            });
-
-            console.log('Select2 initialized successfully');
-        } catch (error) {
-            console.error('Error initializing Select2:', error);
-            // Jika terjadi error, tampilkan dropdown biasa
-            $('#ao_filter_select').show(); 
-        }
+    $(document).ready(function () {
+    var table = $('#nasabah-table').DataTable({
+        columnDefs: [
+            { targets: 5, orderable: false },  // Disable sorting for "Aksi"
+            { targets: 3, orderable: false },   // Disable sorting for "Keterangan"
+            { targets: 6, visible: false },     // Hide the "Created At" column
+            { targets: 0, orderData: 6 }        // Sort "No" based on the 7th column (created_at)
+        ],
+        info: false,        // Disable the information summary
+        paging: false,       // Disable pagination
+        searching: false,    // Disable the default search bar
+        order: [[0, 'desc']] // Initial sorting: "No" column descending (latest first)
+        });
     });
     document.getElementById('search').addEventListener('keyup', function (event) {
         const query = event.target.value;

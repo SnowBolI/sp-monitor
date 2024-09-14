@@ -55,6 +55,7 @@
                 <th>Diserahkan</th>
                 <th>Gambar</th>
                 <th>Aksi</th>
+                <th>Created At</th>
             </tr>
         </thead>
         @foreach($suratPeringatans as $suratPeringatan)
@@ -89,7 +90,9 @@
                 <td>
                     <!-- <button class="btn btn-primary btn-sm edit-btn" data-no="{{ $suratPeringatan->no }}" data-toggle="modal" data-target="#editModal">Edit</button> -->
                     <!-- <button class="btn btn-info btn-sm detail-btn" data-no="{{ $nasabah->nama }}" data-toggle="modal" data-target="#detailModal">Detail</button> -->
-                    <button class="btn btn-danger btn-sm delete-btn" data-id_peringatan="{{ $suratPeringatan->id_peringatan }}" data-toggle="modal" data-target="#deleteModal">Delete</button>                </td>
+                    <button class="btn btn-danger btn-sm delete-btn" data-id_peringatan="{{ $suratPeringatan->id_peringatan }}" data-toggle="modal" data-target="#deleteModal">Delete</button>
+                </td>
+                <td>{{ $nasabah->created_at }}</td>
             </tr>
         @endforeach
     </table>
@@ -226,7 +229,23 @@
     </div>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script> 
+<script src="https://cdn.datatables.net/2.1.6/js/dataTables.js" defer></script>
 <script>
+    $(document).ready(function () {
+    var table = $('#nasabah-table').DataTable({
+        columnDefs: [
+            { targets: 4, orderable: false },  // Disable sorting for "Aksi"
+            { targets: 3, orderable: false },   // Disable sorting for "Keterangan"
+            { targets: 5, visible: false },     // Hide the "Created At" column
+            { targets: 0, orderData: 5 }        // Sort "No" based on the 7th column (created_at)
+        ],
+        info: false,        // Disable the information summary
+        paging: false,       // Disable pagination
+        searching: false,    // Disable the default search bar
+        order: [[0, 'desc']] // Initial sorting: "No" column descending (latest first)
+        });
+    });
     document.getElementById('search').addEventListener('keyup', function (event) {
                             const query = event.target.value;
                             const table = document.getElementById('nasabah-table');

@@ -34,7 +34,7 @@
         <div>
             <form method="GET" action="{{ route('admin-kas.dashboard') }}">
                 <input type="text" id="search" name="search" value="{{ request('search') }}"
-                    placeholder="Search by name, branch, region"
+                    placeholder="Search"
                     class="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-4 py-2 rounded">
 
                 <select name="cabang_filter" onchange="this.form.submit()"
@@ -73,6 +73,7 @@
                 <th>Keterangan</th>
                 <th>Progres SP</th>
                 <th>Aksi</th>
+                <th>Created At</th>
             </tr>
         </thead>
         <tbody>
@@ -155,6 +156,7 @@
                     <button class="btn btn-success mt-1 tambah-btn" data-no="{{ $nasabah->no}}" data-toggle="modal"
                         data-target="#addSurat">Tambah SP</button>
                 </td>
+                <td>{{ $nasabah->created_at }}</td>
             </tr>
             @endforeach
         </tbody>
@@ -481,7 +483,40 @@
     </div>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script> 
+<script src="https://cdn.datatables.net/2.1.6/js/dataTables.js" defer></script>
 <script>
+    document.getElementById("menuButton").onclick = function() {
+    document.getElementById("menuDropdown").classList.toggle("show");
+}
+
+// Close the dropdown if the user clicks outside of it
+window.onclick = function(event) {
+  if (!event.target.matches('.menu-button')) {
+    var dropdowns = document.getElementsByClassName("menu-dropdown");
+    for (var i = 0; i < dropdowns.length; i++) {
+      var openDropdown = dropdowns[i];
+      if (openDropdown.classList.contains('show')) {
+        openDropdown.classList.remove('show');
+      }
+    }
+  }
+}
+    $(document).ready(function () {
+    var table = $('#nasabah-table').DataTable({
+        columnDefs: [
+            { targets: 5, orderable: false },  // Disable sorting for "Aksi"
+            { targets: 3, orderable: false },   // Disable sorting for "Keterangan"
+            { targets: 6, visible: false },     // Hide the "Created At" column
+            { targets: 0, orderData: 6 }        // Sort "No" based on the 7th column (created_at)
+        ],
+        info: false,        // Disable the information summary
+        paging: false,       // Disable pagination
+        searching: false,    // Disable the default search bar
+        order: [[0, 'desc']] // Initial sorting: "No" column descending (latest first)
+        });
+    });
+
     document.getElementById('search').addEventListener('keyup', function (event) {
         const query = event.target.value;
         const table = document.getElementById('nasabah-table');
@@ -565,7 +600,7 @@
 
 
     });
-
+    new DataTable('#nasabah-table');
     // Delete button click event
     $('.delete-btn').on('click', function () {
         var no = $(this).data('no');
@@ -633,22 +668,6 @@
     // Attach events for calculating total on input change
     $('#addPokok, #addBunga, #addDenda').on('input', calculateAddTotal);
     $('#editPokok, #editBunga, #editDenda').on('input', calculateEditTotal);
-    document.getElementById("menuButton").onclick = function() {
-  document.getElementById("menuDropdown").classList.toggle("show");
-}
-
-// Close the dropdown if the user clicks outside of it
-window.onclick = function(event) {
-  if (!event.target.matches('.menu-button')) {
-    var dropdowns = document.getElementsByClassName("menu-dropdown");
-    for (var i = 0; i < dropdowns.length; i++) {
-      var openDropdown = dropdowns[i];
-      if (openDropdown.classList.contains('show')) {
-        openDropdown.classList.remove('show');
-      }
-    }
-  }
-}
 </script>
 
 @endsection

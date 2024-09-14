@@ -82,6 +82,7 @@
                 <th>Keterangan</th>
                 <th>Progres SP</th>
                 <th>Aksi</th>
+                <th>Created At</th>
             </tr>
         </thead>
         @foreach($nasabahs as $index => $nasabah)
@@ -157,6 +158,7 @@
             <button class="btn btn-info btn-sm detail-btn" data-no="{{ $nasabah->no }}" data-toggle="modal"
                 data-target="#detailModal">Detail</button>
         </td>
+        <td>{{ $nasabah->created_at }}</td>
     </tr>
     @endforeach
     </table>
@@ -497,7 +499,23 @@
     </div>
 </div> -->
 
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script> 
+<script src="https://cdn.datatables.net/2.1.6/js/dataTables.js" defer></script>
 <script>
+    $(document).ready(function () {
+    var table = $('#nasabah-table').DataTable({
+        columnDefs: [
+            { targets: 5, orderable: false },  // Disable sorting for "Aksi"
+            { targets: 3, orderable: false },   // Disable sorting for "Keterangan"
+            { targets: 6, visible: false },     // Hide the "Created At" column
+            { targets: 0, orderData: 6 }        // Sort "No" based on the 7th column (created_at)
+        ],
+        info: false,        // Disable the information summary
+        paging: false,       // Disable pagination
+        searching: false,    // Disable the default search bar
+        order: [[0, 'desc']] // Initial sorting: "No" column descending (latest first)
+        });
+    });
     document.getElementById('search').addEventListener('keyup', function (event) {
         const query = event.target.value;
         const table = document.getElementById('nasabah-table');
