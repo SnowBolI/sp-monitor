@@ -7,7 +7,7 @@
     </div>
     @endif
 
-    <button class="btn btn-primary mb-3" onclick="window.open('{{ route('direksi.nasabah.cetak-pdf', [
+    <button class="btn btn-primary mb-3" onclick="window.open('{{ route('supervisor.nasabah.cetak-pdf', [
     'search' => request('search'),
     'cabang_filter' => request('cabang_filter'),
     'wilayah_filter' => request('wilayah_filter'),
@@ -450,6 +450,80 @@
                 <div class="form-group">
                     <label for="detailAdminKas">Admin Kas</label>
                     <input type="text" class="form-control" id="detailAdminKas" readonly>
+                </div>
+                <div class="kunjungan-section mt-4">
+                    <h5>Riwayat Kunjungan</h5>
+                    <div class="recent-visits mb-3">
+                        <h6>5 Kunjungan Terbaru</h6>
+                        <div class="visit-list">
+                            @forelse($kunjunganTerbaru as $kunjungan)
+                                <div class="visit-item card mb-2">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <p class="mb-1"><strong>Tanggal:</strong> 
+                                                    {{ \Carbon\Carbon::parse($kunjungan->tanggal)->format('d-m-Y') }}
+                                                </p>
+                                                <p class="mb-1"><strong>Koordinat:</strong> {{ $kunjungan->koordinat }}</p>
+                                                <p class="mb-1"><strong>Keterangan:</strong> {{ $kunjungan->keterangan }}</p>
+                                            </div>
+                                            <div class="col-md-4">
+                                                @if($kunjungan->bukti_gambar)
+                                                    <img src="{{ asset('storage/kunjungan/' . $kunjungan->bukti_gambar) }}" 
+                                                         alt="Bukti Kunjungan" 
+                                                         class="img-fluid rounded"
+                                                         style="max-height: 100px;">
+                                                @else
+                                                    <span class="text-muted">Tidak ada gambar</span>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @empty
+                                <p class="text-muted">Belum ada data kunjungan</p>
+                            @endforelse
+                        </div>
+                    </div>
+
+                    <!-- Show All Button -->
+                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#allVisits" 
+                            aria-expanded="false" aria-controls="allVisits">
+                        Lihat Semua Kunjungan
+                    </button>
+
+                    <!-- All Visits Collapsible Section -->
+                    <div class="collapse" id="allVisits">
+                        <div class="visit-list mt-3">
+                            @forelse($kunjunganSemua as $kunjungan)
+                                <div class="visit-item card mb-2">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <p class="mb-1"><strong>Tanggal:</strong> 
+                                                    {{ \Carbon\Carbon::parse($kunjungan->tanggal)->format('d-m-Y') }}
+                                                </p>
+                                                <p class="mb-1"><strong>Koordinat:</strong> {{ $kunjungan->koordinat }}</p>
+                                                <p class="mb-1"><strong>Keterangan:</strong> {{ $kunjungan->keterangan }}</p>
+                                            </div>
+                                            <div class="col-md-4">
+                                                @if($kunjungan->bukti_gambar)
+                                                    <img src="{{ asset('storage/kunjungan/' . $kunjungan->bukti_gambar) }}" 
+                                                         alt="Bukti Kunjungan" 
+                                                         class="img-fluid rounded"
+                                                         style="max-height: 100px;">
+                                                @else
+                                                    <span class="text-muted">Tidak ada gambar</span>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @empty
+                                <p class="text-muted">Belum ada data kunjungan</p>
+                            @endforelse
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">

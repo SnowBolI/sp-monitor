@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('bunga');
             $table->string('denda');
             $table->integer('total');
+            $table->datetime('tanggal_jtp')->nullable();
+
             $table->text('keterangan');
             // $table->datetime('ttd');
             // $table->datetime('kembali');

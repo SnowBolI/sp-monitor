@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Nasabah;
 use App\Models\PegawaiAccountOffice;
 use App\Models\SuratPeringatan;
+use App\Models\Kunjungan;
 use App\Models\Cabang;
 use App\Models\KantorKas;
 use App\Models\User;
@@ -124,7 +125,6 @@ class SupervisorController extends Controller
 //     return view('supervisor.dashboard', compact('title', 'accountOfficers', 'aocabang', 'nasabahs', 'suratPeringatans', 'cabangs', 'kantorkas', 'currentUser', 'nasabahNames'));
 // }
 
-
 public function dashboard(Request $request)
 {
     Log::info('Memasuki fungsi dashboard');
@@ -230,10 +230,38 @@ public function dashboard(Request $request)
 
     $cabangs = Cabang::all();
     $kantorkas = KantorKas::all();
+    $kunjunganTerbaru = Kunjungan::select('');
+    $kunjunganSemua = Kunjungan::all();
 
-    return view('supervisor.dashboard', compact('title', 'accountOfficers', 'nasabahs', 'suratPeringatans', 'cabangs', 'kantorkas', 'currentUser', 'nasabahNames'));
+    return view('supervisor.dashboard', compact('title', 'accountOfficers', 'nasabahs', 'suratPeringatans', 'cabangs', 'kantorkas', 'currentUser', 'nasabahNames','kunjunganTerbaru','kunjunganSemua'));
 }
 
+public function show($no)
+{
+    $nasabah = Nasabah::with([
+        'cabang',
+        'kantorkas',
+        'account_officer',
+        'admin_kas'
+    ])->where('no', $no)->firstOrFail();
+
+    // Get 5 most recent visits
+    $kunjunganTerbaru = Kunjungan::where('user_id', $nasabah->user_id)
+        ->orderBy('tanggal', 'desc')
+        ->take(5)
+        ->get();
+
+    // Get all visits
+    $kunjunganSemua = Kunjungan::where('user_id', $nasabah->user_id)
+        ->orderBy('tanggal', 'desc')
+        ->get();
+
+    return response()->json([
+        'nasabah' => $nasabah,
+        'kunjunganTerbaru' => $kunjunganTerbaru,
+        'kunjunganSemua' => $kunjunganSemua
+    ]);
+}
 
 public function editNasabah($no)
 {
@@ -361,7 +389,6 @@ public function cetakPdf(Request $request)
             $query->where('name', $aoFilter);
         });
     }
-
     $suratPeringatans = $query->get();
 
     // Handle jika tidak ada data yang ditemukan

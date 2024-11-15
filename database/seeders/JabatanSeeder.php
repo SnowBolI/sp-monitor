@@ -20,6 +20,7 @@ class JabatanSeeder extends Seeder
             ['nama_jabatan' => 'Supervisor'],
             ['nama_jabatan' => 'Admin Kas'],
             ['nama_jabatan' => 'Account Officer'],
+            ['nama_jabatan' => 'Kepala Bagian'],
             ['nama_jabatan' => 'Super Admin'],
         ]);
     }

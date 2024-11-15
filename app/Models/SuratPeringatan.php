@@ -11,7 +11,7 @@ class SuratPeringatan extends Model
     protected $primaryKey = 'id_peringatan';
     
     protected $fillable = [
-        'no', 'tingkat', 'dibuat', 'kembali', 'diserahkan', 'keterangan', 'bukti_gambar', 'scan_pdf', 'id_account_officer'
+        'no', 'kategori', 'tingkat', 'dibuat', 'kembali', 'diserahkan', 'keterangan', 'bukti_gambar', 'scan_pdf', 'id_account_officer'
     ];
 
     public function accountOfficer()

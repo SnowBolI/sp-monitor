@@ -96,35 +96,108 @@ ul {
     z-index: 99999;
 }
 
+/* Style untuk tombol dropdown */
+.dropbtn {
+    background-color: #3498db;
+    color: white;
+    padding: 16px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
 
-    .sp-indicators {
-        display: flex;
-        flex-direction: row;
-        gap: 5px; /* Adjust this value to control spacing between indicators */
-    }
+/* Kontainer dropdown */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
 
-    .tingkat-1, .tingkat-2, .tingkat-3 {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        display: inline-block;
-    }
+/* Dropdown konten */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 230px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
 
-    .tingkat-1 {
-        background-color: green;
-    }
+/* Style link di dalam dropdown */
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
 
-    .tingkat-2 {
-        background-color: orange;
-    }
+/* Style untuk menampilkan input */
+.dropdown-content input[type="text"] {
+    padding: 8px;
+    margin: 8px;
+    font-size: 16px;
+    border: none;
+    width: 90%;
+}
 
-    .tingkat-3 {
-        background-color: red;
-    }
-    /* Contoh perbaikan CSS */
-    body {
-        font-family: sans-serif; /* Pilih font yang mudah dibaca */
-    }
+/* Menampilkan dropdown saat tombol diklik */
+.dropdown-content a:hover {background-color: #ddd;}
+.dropdown:hover .dropbtn {background-color: #2980b9;}
+
+/* Menampilkan dropdown */
+.show {display: block;}
+
+.warning-indicators {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.sp-indicators,
+.somasi-indicators,
+.pendampingan-indicators {
+    display: flex;
+    gap: 5px;
+}
+
+/* SP Styles (Circles) */
+.tingkat-1, .tingkat-2, .tingkat-3 {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.tingkat-1 { background-color: green; }
+.tingkat-2 { background-color: orange; }
+.tingkat-3 { background-color: red; }
+
+/* Somasi Style (Square) */
+.somasi {
+    width: 12px;
+    height: 12px;
+    background-color: #8B0000;
+    display: inline-block;
+    cursor: pointer;
+}
+
+/* Pendampingan Style (Triangle) */
+.pendampingan {
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 14px solid #4B0082;
+    display: inline-block;
+    cursor: pointer;
+}
+
+/* Hover effect for all indicators */
+.tingkat-1:hover, .tingkat-2:hover, .tingkat-3:hover,
+.somasi:hover, .pendampingan:hover {
+    transform: scale(1.2);
+    transition: transform 0.2s;
+}
 
     .dashboard-container {
         margin-top: 20px; /* Existing margin */
@@ -234,13 +307,38 @@ ul {
     }
     
     #nasabah-table th, #nasabah-table td {
-        border: 1px solid black; /* Add a light gray border */
-        padding: 8 px; /* Add some padding for better readability */
-        text-align: left; /* Align text to the left */
+        border: 1px solid black; 
+        padding: 8px; 
+        text-align: center; /* Mengatur teks menjadi center */
+        font-size: 18px; /* Memperbesar ukuran font sedikit */
     }
     
-    #nasabah-table th {
-        background-color: #f2f2f2; /* Add a light background to table headers */
+    #nasabah-table th:nth-child(1) { /* Kolom 'No' */
+        background-color: #f7ce3e; /* Abu-abu sangat muda */
+    }
+    
+    #nasabah-table th:nth-child(2) { /* Kolom 'Nama' */
+        background-color: #f7ce3e; /* Abu-abu muda */
+    }
+    
+    #nasabah-table th:nth-child(3) { /* Kolom 'Total' */
+        background-color: #f7ce3e; /* Biru sangat muda */
+    }
+    
+    #nasabah-table th:nth-child(4) { /* Kolom 'Keterangan' */
+        background-color: #f7ce3e; /* Biru muda */
+    }
+    
+    #nasabah-table th:nth-child(5) { /* Kolom 'Progres SP' */
+        background-color: #f7ce3e; /* Biru muda sedikit lebih gelap */
+    }
+    
+    #nasabah-table th:nth-child(6) { /* Kolom 'Aksi' */
+        background-color: #f7ce3e; /* Biru muda lebih gelap */
+    }
+    
+    #nasabah-table th:nth-child(7) { /* Kolom 'Created At' */
+        background-color: #f7ce3e; /* Abu-abu kebiruan */
     }
 
     .custom-pdf-button {

@@ -10,6 +10,7 @@ use App\Models\Nasabah;
 use App\Models\KantorKas;
 use App\Models\PegawaiAdminKas;
 use App\Models\PegawaiSupervisor;
+use App\Models\PegawaiKepalaBagian;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\PegawaiKepalaCabang;
 use App\Events\UserRegisteredMobile;
@@ -37,6 +38,11 @@ class User extends Authenticatable
     public function key()
     {
         return $this->belongsTo(Key::class, 'key', 'key');
+    }
+
+    public function pegawaiKepalaBagian()
+    {
+        return $this->hasOne(PegawaiKepalaBagian::class, 'id_user');
     }
 
     public function pegawaiKepalaCabang()

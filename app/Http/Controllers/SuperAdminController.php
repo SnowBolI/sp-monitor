@@ -15,6 +15,8 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\KeysImport;
 use App\Models\KantorKas;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+
 
 class SuperAdminController extends Controller
 {
@@ -173,6 +175,44 @@ public function tampilkanKantorKas()
     $kantorkas = KantorKas::all(); 
     return view('super-admin.kantorkas', compact('kantorkas','title','cabangs'));
 }
+// public function edit(Request $request, $id)
+
+//     // Ambil user dan cek validated user
+//     $validatedUser = Auth::user(); // Atau metode lain sesuai validasi yang digunakan
+//     $user = User::findOrFail($id); // Ambil user berdasarkan ID
+
+//     if ($validatedUser) {
+//         Log::info('Validated user ditemukan: ', ['validated_user' => $validatedUser]);
+
+//         $userId = $user->id;
+//         $jabatanId = $user->id_jabatan;
+
+//         if ($jabatanId == 4) { // Admin Kas
+//             // Cari nasabah yang memiliki id_admin_kas sesuai dengan user ID
+//             $nasabah = Nasabah::where('id_admin_kas', $userId)->first();
+//             if ($nasabah) {
+//                 $nasabah->id_admin_kas = $validatedUser->id; // Ganti dengan ID validated user
+//                 $nasabah->save();
+//                 Log::info('Nasabah id_admin_kas updated', ['nasabah' => $nasabah]);
+//             }
+//         } elseif ($jabatanId == 5) { // Account Officer
+//             // Cari nasabah yang memiliki id_account_officer sesuai dengan user ID
+//             $nasabah = Nasabah::where('id_account_officer', $userId)->first();
+//             if ($nasabah) {
+//                 $nasabah->id_account_officer = $validatedUser->id; // Ganti dengan ID validated user
+//                 $nasabah->save();
+//                 Log::info('Nasabah id_account_officer updated', ['nasabah' => $nasabah]);
+//             }
+//         }
+//     } else {
+//         Log::info('Tidak ada validated user, tidak ada perubahan pada nasabah.');
+//     }
+
+//     // Lanjutkan update user sesuai request
+//     $user->update($request->all());
+
+//     return response()->json(['message' => 'User berhasil diupdate', 'user' => $user]);
+// }
 
 public function edit($id)
 {
@@ -300,6 +340,7 @@ public function importKeys(Request $request)
         $validatedData = $request->validate([
             'name' => 'required',
             'jabatan_id' => 'required',
+            'id_user'=> 'nullable',
             'id_cabang' => 'required',
             'id_kantorkas' => 'required',
         ]);
@@ -307,6 +348,46 @@ public function importKeys(Request $request)
 
         $user = User::findOrFail($id);
         Log::info('User found for updating: ', ['user' => $user]);
+        if (!$user) {
+            Log::warning('User not found', ['id' => $id]);
+            return response()->json(['message' => 'User not found'], 404);
+        }
+    
+        Log::info('User found', ['user' => $user]);
+    
+        // Cek apakah validated user ada
+        if (isset($validatedData['id_user'])) {
+            // Cari pengguna berdasarkan jabatan
+            switch ($user->jabatan_id) {
+                case 4:
+                    // Update semua nasabah dengan id_admin_kas yang cocok
+                    $updatedRowsNasabah = Nasabah::where('id_admin_kas', $id)
+                        ->update(['id_admin_kas' => $validatedData['id_user']]);
+                    
+                    Log::info("Nasabah id_admin_kas updated for {$updatedRowsNasabah} rows", ['new_id_admin_kas' => $validatedData['id_user']]);
+                    break;
+        
+                case 5:
+                    // Update semua nasabah dengan id_account_officer yang cocok
+                    $updatedRowsNasabah = Nasabah::where('id_account_officer', $id)
+                        ->update(['id_account_officer' => $validatedData['id_user']]);
+                    
+                    Log::info("Nasabah id_account_officer updated for {$updatedRowsNasabah} rows", ['new_id_account_officer' => $validatedData['id_user']]);
+        
+                    // Update semua SuratPeringatan dengan id_account_officer yang cocok
+                    $updatedRowsSuratPeringatan = SuratPeringatan::where('id_account_officer', $id)
+                        ->update(['id_account_officer' => $validatedData['id_user']]);
+        
+                    Log::info("SuratPeringatan id_account_officer updated for {$updatedRowsSuratPeringatan} rows", ['new_id_account_officer' => $validatedData['id_user']]);
+                    break;
+        
+                default:
+                    Log::info('No action needed for this jabatan', ['jabatan_id' => $user->jabatan_id]);
+                    break;
+            }
+        }
+        
+    
 
         $user->update($request->all());
         Log::info('User updated successfully', ['user' => $user]);

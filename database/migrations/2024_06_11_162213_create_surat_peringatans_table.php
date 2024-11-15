@@ -15,6 +15,7 @@ return new class extends Migration
             Schema::create('surat_peringatans', function (Blueprint $table) {
                 $table->id('id_peringatan');
                 $table->unsignedBigInteger('no');
+                $table->string('kategori');
                 $table->integer('tingkat');
                 $table->datetime('dibuat')->nullable();
                 $table->datetime('kembali')->nullable();
@@ -23,7 +24,7 @@ return new class extends Migration
                 $table->string('scan_pdf')->nullable();
                 $table->unsignedBigInteger('id_account_officer');
                 $table->timestamps();
-    
+
                 $table->foreign('no')->references('no')->on('nasabahs')->onDelete('cascade');
                 $table->foreign('id_account_officer')->references('id')->on('users')->onDelete('cascade');
             });

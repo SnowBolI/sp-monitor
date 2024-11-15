@@ -7,7 +7,7 @@
     </div>
     @endif
 
-    <button class="btn btn-primary mb-3" onclick="window.open('{{ route('direksi.nasabah.cetak-pdf', [
+    <button class="btn btn-primary mb-3" onclick="window.open('{{ route('kepala-cabang.nasabah.cetak-pdf', [
     'search' => request('search'),
     'cabang_filter' => request('cabang_filter'),
     'wilayah_filter' => request('wilayah_filter'),

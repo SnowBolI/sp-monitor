@@ -11,6 +11,7 @@ use App\Http\Controllers\AdminKasController;
 use App\Http\Controllers\DireksiController;
 use App\Http\Controllers\KepalaCabangController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\KepalaBagianController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\FileController;
@@ -103,8 +104,6 @@ Route::prefix('supervisor')
         Route::post('nasabah/add', [SupervisorController::class, 'addNasabah'])->name('nasabah.add');
         Route::delete('nasabah/delete/{no}', [SupervisorController::class, 'deleteNasabah'])->name('nasabah.delete');
         Route::get('/nasabah/cetak-pdf', [SupervisorController::class, 'cetakPdf'])->name('nasabah.cetak-pdf');
-
-
 });
 
 Route::prefix('admin-kas')
@@ -134,6 +133,20 @@ Route::prefix('account-officer')
         Route::delete('nasabah/delete/{id_peringatan}', [AccountOfficerController::class, 'deleteNasabah'])->name('nasabah.delete');
 });
 
+Route::prefix('kepala-bagian')
+    ->name('kepala-bagian.')
+    ->middleware('jabatan:6')
+    ->group(function () {
+        Route::get('/dashboard', [KepalaBagianController::class, 'dashboard'])->name('dashboard');
+        Route::get('/nasabah/edit/{no}', [KepalaBagianController::class, 'editNasabah'])->name('nasabah.edit');
+        Route::get('/admin-kas/search', [KepalaBagianController::class, 'search'])->name('admin-kas.search');
+        Route::put('/nasabah/update/{no}', [KepalaBagianController::class, 'update'])->name('nasabah.update');
+        Route::post('nasabah/add', [KepalaBagianController::class, 'addNasabah'])->name('nasabah.add');
+        Route::delete('nasabah/delete/{no}', [KepalaBagianController::class, 'deleteNasabah'])->name('nasabah.delete');
+        Route::get('/nasabah/cetak-pdf', [KepalaBagianController::class, 'cetakPdf'])->name('nasabah.cetak-pdf');
+        // Route::post('/nasabah/surat', [KepalaCabangController::class, 'addSurat'])->name('nasabah.surat');
+});
+
 Route::prefix('super-admin')
     ->name('super-admin.')
     ->middleware('jabatan:99')
@@ -151,6 +164,7 @@ Route::prefix('super-admin')
         Route::delete('key/delete/{key}', [SuperAdminController::class, 'deleteKey'])->name('key.delete');
         Route::put('/user/update/{id}', [SuperAdminController::class, 'update'])->name('user.update'); 
         Route::post('/keys/import', [SuperAdminController::class, 'importKeys'])->name('keys.import');
+        Route::get('/get-users-by-jabatan/{jabatanId}', 'SuperAdminController@getUsersByJabatan')->name('get-users-by-jabatan');
 });
 
 

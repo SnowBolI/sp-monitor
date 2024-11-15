@@ -106,7 +106,11 @@
                     @method('PUT') 
                     <div class="form-group">
                         <label for="editNama">Nama</label>
-                        <input type="text" class="form-control" id="editNama" name="name" readonly required>
+                        <input type="text" class="form-control" id="editNama" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editEmail">Email</label>
+                        <input type="text" class="form-control" id="editEmail" name="email" required>
                     </div>
                     <div class="form-group">
                         <label for="editStatus">Status</label>
@@ -114,6 +118,16 @@
                             <option value="" disabled selected>Pilih Status</option>
                             <option value="1">Aktif</option>
                             <option value="2">Tidak Aktif</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="editUser">Digantikan Oleh : (Opsional)</label>
+                        <input type="text" id="myInput" onkeyup="filterFunction()" placeholder="Search User" class="form-control" style="margin-top: 5px;">
+                        <select class="form-control" id="editUser" name="id_user" size="5" style="margin-top: 10px;">
+                            <option value="" disabled selected>Pilih User</option>
+                            @foreach($users as $user)
+                                <option value="{{ $user->id }}">{{ $user->name }}</option>
+                            @endforeach
                         </select>
                     </div>
                     <div class="form-group">
@@ -126,7 +140,7 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="editCabang">Cabang</label>
+                    <label for="editCabang">Cabang</label>
                         <select class="form-control" id="editCabang" name="id_cabang" required>
                             <option value="" disabled selected>Pilih Cabang</option>
                             @foreach($cabangs as $cabang)
@@ -156,6 +170,21 @@
 </div>
 
 <script>
+    function filterFunction() {
+    var input, filter, select, options, i;
+    input = document.getElementById("myInput");
+    filter = input.value.toLowerCase();
+    select = document.getElementById("editUser");
+    options = select.getElementsByTagName("option");
+
+    for (i = 0; i < options.length; i++) {
+        if (options[i].text.toLowerCase().indexOf(filter) > -1) {
+            options[i].style.display = ""; // Show option
+        } else {
+            options[i].style.display = "none"; // Hide option
+        }
+    }
+}
     document.getElementById('search').addEventListener('keyup', function (event) {
         const query = event.target.value;
         const table = document.getElementById('nasabah-table');
@@ -188,6 +217,7 @@
         method: 'GET',
         success: function (data) {
             $('#editNama').val(data.name);
+            $('#editEmail').val(data.email)
             if(data.infostatus) $('#editStatus').val(data.infostatus.id); // Sesuaikan dengan struktur data Anda
             if(data.jabatan) $('#editJabatan').val(data.jabatan.id_jabatan);
             if(data.cabang) $('#editCabang').val(data.cabang.id_cabang);

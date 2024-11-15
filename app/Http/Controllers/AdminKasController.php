@@ -212,7 +212,7 @@ public function update(Request $request, $no)
             'bunga' => 'required|numeric',
             'denda' => 'required|numeric',
             'keterangan' => 'required',
-            'ttd' => 'required|date',
+            'tanggal_jtp' => 'required|date',
             'kembali' => 'required|date',
             'id_cabang' => 'required|integer',
             'id_kantorkas' => 'required|integer',
@@ -243,6 +243,7 @@ public function addSurat(Request $request)
 
     $request->validate([
         'no' => 'required',
+        'kategori' => 'required',
         'tingkat' => 'required',
         'scan_pdf' => 'required|mimes:pdf|max:2048'
     ]);
@@ -250,7 +251,7 @@ public function addSurat(Request $request)
     Log::info('Data passed validation', $request->all());
 
     try {
-        $suratData = $request->only(['no', 'tingkat', 'dibuat', 'kembali']);
+        $suratData = $request->only(['no', 'kategori', 'tingkat', 'dibuat', 'kembali']);
 
         // Ambil id_account_officer dari tabel Nasabah berdasarkan 'no'
         $nasabah = Nasabah::where('no', $suratData['no'])->first();
@@ -287,6 +288,7 @@ public function addSurat(Request $request)
         // Save the Surat Peringatan
         SuratPeringatan::create([
             'no' => $suratData['no'],
+            'kategori' =>$suratData['kategori'],
             'tingkat' => $suratData['tingkat'],
             'dibuat' => $suratData['dibuat'],
             'kembali' => $suratData['kembali'],
@@ -383,6 +385,7 @@ public function addNasabah(Request $request)
         'denda' => 'required|numeric',
         'total' => 'required|numeric',
         'keterangan' => 'required',
+        'tanggal_jtp' => 'required|date',
         // 'ttd' => 'required|date',
         // 'kembali' => 'required|date',
         'id_cabang' => 'required|exists:cabangs,id_cabang',
@@ -395,7 +398,7 @@ public function addNasabah(Request $request)
         $nasabahData['id_admin_kas'] = auth()->user()->id;
 
         Nasabah::create($nasabahData);  // Insert data into the database
-
+        Log::info('Tanggal JTP:', ['tanggal_jtp' => $request->input('tanggal_jtp')]);
         Log::info('Nasabah added successfully', $nasabahData);
         
 

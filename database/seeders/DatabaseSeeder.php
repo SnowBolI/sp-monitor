@@ -33,7 +33,7 @@ class DatabaseSeeder extends Seeder
             // SupervisorSeeder::class,
             // AdminKasSeeder::class,
             // AccountOfficerSeeder::class,
-            // NasabahSeeder::class,
+            NasabahSeeder::class,
             // NipSeeder::class
         ]);
     

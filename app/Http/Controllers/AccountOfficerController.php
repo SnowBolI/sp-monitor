@@ -154,11 +154,21 @@ public function addNasabah(Request $request)
     try {
         $nasabahData = $request->only(['nama', 'tingkat', 'diserahkan']);
 
+        Log::info('File upload attempt', [
+            'has_file' => $request->hasFile('bukti_gambar'),
+            'is_valid' => $request->hasFile('bukti_gambar') ? $request->file('bukti_gambar')->isValid() : 'N/A',
+            'file_info' => $request->hasFile('bukti_gambar') ? $request->file('bukti_gambar') : 'No file'
+        ]);
+
         // Handle the image upload for 'bukti_gambar'
         if ($request->hasFile('bukti_gambar')) {
             $buktiGambarPath = $request->file('bukti_gambar')->store('bukti_gambar', 'public');
             $nasabahData['bukti_gambar'] = $buktiGambarPath;
         }
+
+        Log::info('File upload result', [
+            'path' => $buktiGambarPath ?? 'No path (upload likely failed)'
+        ]);
 
         // Retrieve the Nasabah by name
         $nasabah = Nasabah::where('nama', $nasabahData['nama'])->first();
@@ -167,7 +177,8 @@ public function addNasabah(Request $request)
             return redirect()->back()->with('error', 'Nasabah not found.');
         }
 
-        // Check if the Surat Peringatan already exists
+
+        // Check if the falready exists
         $suratPeringatan = SuratPeringatan::where('no', $nasabah->no)
             ->where('tingkat', $nasabahData['tingkat'])
             ->first();

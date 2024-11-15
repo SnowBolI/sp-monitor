@@ -86,64 +86,144 @@
                 <td>
                 @php
             $matchingSp = $suratPeringatans->where('no', $nasabah->no)->sortByDesc('dibuat')->values();
+            $matchingSomasi = $suratPeringatans->where('no', $nasabah->no)->sortByDesc('dibuat')->values();
+            $matchingPendampingan = $suratPeringatans->where('no', $nasabah->no)->sortByDesc('dibuat')->values();
+
             $totalSp = $matchingSp->count();
+            $totalSomasi = $matchingSp->count();
+            $totalPendampingan = $matchingSp->count();
             @endphp
 
-            @if($totalSp > 0)
-            <div class="sp-indicators">
-                @for($i = $totalSp - 1; $i >= 0; $i--)
-                <span class="tingkat-{{ $matchingSp[$i]->tingkat }}"
-                    title="Tingkat {{ $matchingSp[$i]->tingkat }} - {{ $matchingSp[$i]->dibuat }}"
-                    data-toggle="modal" data-target="#modalDetail{{ $index }}-{{ $i }}">
-                </span>
+@if($totalSp > 0 || $totalSomasi > 0 || $totalPendampingan > 0)
+    <div class="warning-indicators">
+        <!-- SP Indicators -->
+        @if($totalSp > 0 || $totalSomasi > 0 || $totalPendampingan > 0)
+    <div class="warning-indicators">
+        <!-- SP Indicators -->
+        @for($i = $totalSp - 1; $i >= 0; $i--)
+        <span class="indicator tingkat-{{ $matchingSp[$i]->tingkat }}"
+            title="SP Tingkat {{ $matchingSp[$i]->tingkat }} - {{ $matchingSp[$i]->dibuat }}"
+            data-toggle="modal" data-target="#modalDetail{{ $index }}-{{ $i }}">
+        </span>
+        @endfor
 
-                        <!-- Modal Detail SP -->
-                        <div class="modal fade" id="modalDetail{{ $index }}-{{ $i }}" tabindex="-1" role="dialog"
-                    aria-labelledby="modalDetailLabel{{ $index }}-{{ $i }}" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="modalDetailLabel{{ $index }}-{{ $i }}">Surat Peringatan {{
-                                    $matchingSp[$i]->tingkat }}</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <!-- Menampilkan detail dari surat_peringatans -->
-                                <p>No: {{ $matchingSp[$i]->no }}</p>
-                                <p>Nama: {{ $matchingSp[$i]->nama }}</p>
-                                <p>Tingkat: {{ $matchingSp[$i]->tingkat }}</p>
-                                <p>Dibuat: {{ $matchingSp[$i]->dibuat }}</p>
-                                <p>Diserahkan: {{ $matchingSp[$i]->diserahkan }}</p>
-                                <p>Kembali: {{ $matchingSp[$i]->kembali }}</p>
+        <!-- Somasi Indicators -->
+        @for($i = $totalSomasi - 1; $i >= 0; $i--)
+        <span class="indicator somasi"
+            title="Somasi - {{ $matchingSomasi[$i]->dibuat }}"
+            data-toggle="modal" data-target="#modalSomasi{{ $index }}-{{ $i }}">
+        </span>
+        @endfor
 
-                                <!-- Menampilkan Bukti Gambar -->
-                                @if($matchingSp[$i]->bukti_gambar)
-                                <p>Bukti Gambar:</p>
-                                <img src="{{ asset('storage/'.$matchingSp[$i]->bukti_gambar) }}"
-                                    alt="Bukti Gambar" class="img-fluid">
-                                @endif
+        <!-- Pendampingan Indicators -->
+        @for($i = $totalPendampingan - 1; $i >= 0; $i--)
+        <span class="indicator pendampingan"
+            title="Pendampingan - {{ $matchingPendampingan[$i]->dibuat }}"
+            data-toggle="modal" data-target="#modalPendampingan{{ $index }}-{{ $i }}">
+        </span>
+        @endfor
+    </div>
+@endif
 
-                                <!-- Menampilkan Scan PDF -->
-                                @if($matchingSp[$i]->scan_pdf)
-                                <p>Scan PDF:</p>
+        <!-- Somasi Indicators -->
+        @if($totalSomasi > 0)
+            <div class="somasi-indicators">
+                @for($i = $totalSomasi - 1; $i >= 0; $i--)
+                    <span class="somasi"
+                        title="Somasi - {{ $matchingSomasi[$i]->dibuat }}"
+                        data-toggle="modal" data-target="#modalSomasi{{ $index }}-{{ $i }}">
+                    </span>
 
-                                <button onclick="openPdf('{{ asset('storage/'.$matchingSp[$i]->scan_pdf) }}')" class="btn btn-primary">Lihat PDF</button>
-                                @endif
-                                
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <!-- Modal Detail Somasi -->
+                    <div class="modal fade" id="modalSomasi{{ $index }}-{{ $i }}" tabindex="-1" role="dialog"
+                        aria-labelledby="modalSomasiLabel{{ $index }}-{{ $i }}" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="modalSomasiLabel{{ $index }}-{{ $i }}">Somasi</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>No: {{ $matchingSomasi[$i]->no }}</p>
+                                    <p>Nama: {{ $matchingSomasi[$i]->nama }}</p>
+                                    <p>Dibuat: {{ $matchingSomasi[$i]->dibuat }}</p>
+                                    <p>Diserahkan: {{ $matchingSomasi[$i]->diserahkan }}</p>
+                                    <p>Kembali: {{ $matchingSomasi[$i]->kembali }}</p>
+
+                                    @if($matchingSomasi[$i]->bukti_gambar)
+                                    <p>Bukti Gambar:</p>
+                                    <img src="{{ asset('storage/'.$matchingSomasi[$i]->bukti_gambar) }}"
+                                        alt="Bukti Gambar" class="img-fluid">
+                                    @endif
+
+                                    @if($matchingSomasi[$i]->scan_pdf)
+                                    <p>Scan PDF:</p>
+                                    <button onclick="openPdf('{{ asset('storage/'.$matchingSomasi[$i]->scan_pdf) }}')" class="btn btn-primary">Lihat PDF</button>
+                                    @endif
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
                 @endfor
             </div>
-            @else
-            N/A
-            @endif
+        @endif
+
+        <!-- Pendampingan Indicators -->
+        @if($totalPendampingan > 0)
+            <div class="pendampingan-indicators">
+                @for($i = $totalPendampingan - 1; $i >= 0; $i--)
+                    <span class="pendampingan"
+                        title="Pendampingan - {{ $matchingPendampingan[$i]->dibuat }}"
+                        data-toggle="modal" data-target="#modalPendampingan{{ $index }}-{{ $i }}">
+                    </span>
+
+                    <!-- Modal Detail Pendampingan -->
+                    <div class="modal fade" id="modalPendampingan{{ $index }}-{{ $i }}" tabindex="-1" role="dialog"
+                        aria-labelledby="modalPendampinganLabel{{ $index }}-{{ $i }}" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="modalPendampinganLabel{{ $index }}-{{ $i }}">Pendampingan</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>No: {{ $matchingPendampingan[$i]->no }}</p>
+                                    <p>Nama: {{ $matchingPendampingan[$i]->nama }}</p>
+                                    <p>Dibuat: {{ $matchingPendampingan[$i]->dibuat }}</p>
+                                    <p>Diserahkan: {{ $matchingPendampingan[$i]->diserahkan }}</p>
+                                    <p>Kembali: {{ $matchingPendampingan[$i]->kembali }}</p>
+
+                                    @if($matchingPendampingan[$i]->bukti_gambar)
+                                    <p>Bukti Gambar:</p>
+                                    <img src="{{ asset('storage/'.$matchingPendampingan[$i]->bukti_gambar) }}"
+                                        alt="Bukti Gambar" class="img-fluid">
+                                    @endif
+
+                                    @if($matchingPendampingan[$i]->scan_pdf)
+                                    <p>Scan PDF:</p>
+                                    <button onclick="openPdf('{{ asset('storage/'.$matchingPendampingan[$i]->scan_pdf) }}')" class="btn btn-primary">Lihat PDF</button>
+                                    @endif
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endfor
+            </div>
+        @endif
+    </div>
+@else
+    N/A
+@endif
 
                 </td>
                 <td>
@@ -202,6 +282,10 @@
                     <div class="form-group">
                         <label for="addTotal">Total</label>
                         <input type="number" class="form-control" id="addTotal" name="total" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="addJtp">JTP</label>
+                        <input type="datetime-local" class="form-control" id="addJtp" name="tanggal_jtp" required>
                     </div>
                     <div class="form-group">
                         <label for="addKeterangan">Keterangan</label>
@@ -267,6 +351,14 @@
                         <input type="text" class="form-control" id="tambahNo" name="no" readonly>
                     </div>
                     <div class="form-group">
+                        <label for="addTingkat">Kategori</label>
+                        <select class="form-control" id="addSp" name="kategori" required>
+                            <option value="Surat Peringatan">Surat Peringatan</option>
+                            <option value="Somasi">Somasi</option>
+                            <option value="Pendampingan">Pendampingan</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
                         <label for="addTingkat">Progress SP</label>
                         <select class="form-control" id="addTingkat" name="tingkat" required>
                             <option value="1">1</option>
@@ -287,20 +379,6 @@
                         <input type="file" class="form-control" id="addScanPdf" name="scan_pdf" accept="application/pdf"
                             required>
                     </div>
-                    <!-- <div class="form-group">
-                        <label for="addAccountOfficer">Account Officer</label>
-                        <select class="form-control select2" id="addAccountOfficer" name="id_account_officer" required>
-                            <option value="">Pilih Account Officer</option>
-                            @foreach($accountOfficers as $accountOfficer)
-                                <option value="{{ $accountOfficer->id }}">{{ $accountOfficer->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="admin_kas"></label>
-                        <input type="hidden" id="admin_kas" value="{{ auth()->user()->name }}" readonly>
-                        <input type="hidden" name="id_admin_kas" value="{{ auth()->user()->id }}">
-                    </div> -->
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
@@ -429,6 +507,10 @@
                     <input type="number" class="form-control" id="detailTotal" name="total" readonly>
                 </div>
                 <div class="form-group">
+                    <label for="detailJtp">JTP</label>
+                    <input type="date" class="form-control" id="detailJTP" name="tanggal_jtp" readonly>
+                </div>
+                <div class="form-group">
                     <label for="detailKeterangan">Keterangan</label>
                     <textarea class="form-control" id="detailKeterangan" name="keterangan" readonly></textarea>
                 </div>
@@ -486,6 +568,54 @@
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script> 
 <script src="https://cdn.datatables.net/2.1.6/js/dataTables.js" defer></script>
 <script>
+     // Calculate total for add form
+     function calculateAddTotal() {
+        var pokok = parseFloat($('#addPokok').val()) || 0;
+        var bunga = parseFloat($('#addBunga').val()) || 0;
+        var denda = parseFloat($('#addDenda').val()) || 0;
+        var total = pokok + bunga + denda;
+        $('#addTotal').val(total);
+    }
+
+    // Calculate total for edit form
+    function calculateEditTotal() {
+        var pokok = parseFloat($('#editPokok').val()) || 0;
+        var bunga = parseFloat($('#editBunga').val()) || 0;
+        var denda = parseFloat($('#editDenda').val()) || 0;
+        var total = pokok + bunga + denda;
+        $('#editTotal').val(total);
+    }
+
+    // Attach events for calculating total on input change
+    $('#addPokok, #addBunga, #addDenda').on('input', calculateAddTotal);
+    $('#editPokok, #editBunga, #editDenda').on('input', calculateEditTotal);
+    // Delete button click event
+    $('.delete-btn').on('click', function () {
+        var no = $(this).data('no');
+        $('#deleteNo').val(no);
+        $('#deleteForm').attr('action', '/admin-kas/nasabah/delete/' + no);
+    });
+     // Tambah button
+     $('.tambah-btn').on('click', function () {
+        var no = $(this).data('no');
+        $.ajax({
+            url: '/admin-kas/nasabah/edit/' + no,
+            method: 'GET',
+            success: function (data) {
+                // Populate the modal with data
+                $('#tambahNo').val(data.no);
+                $('#editForm').attr('action', '/admin-kas/nasabah/update/' + no);
+                $('#editForm').find('input[name="_method"]').val('PUT'); // Set the method to PUT
+
+
+                // Menampilkan modal
+                $('#editModal').modal('show');
+            },
+            error: function (xhr) {
+                alert('Terjadi kesalahan saat memuat data.');
+            }
+        });
+    });
     document.getElementById("menuButton").onclick = function() {
     document.getElementById("menuDropdown").classList.toggle("show");
 }
@@ -589,6 +719,7 @@ window.onclick = function(event) {
         $('#detailBunga').val(data.bunga);
         $('#detailDenda').val(data.denda);
         $('#detailTotal').val(data.total);
+        $('#detailJtp').val(data.tanggal_jtp);
         $('#detailKeterangan').val(data.keterangan);
         // $('#detailTtd').val(data.ttd);
         // $('#detailKembali').val(data.kembali);
@@ -601,73 +732,9 @@ window.onclick = function(event) {
 
     });
     new DataTable('#nasabah-table');
-    // Delete button click event
-    $('.delete-btn').on('click', function () {
-        var no = $(this).data('no');
-        $('#deleteNo').val(no);
-        $('#deleteForm').attr('action', '/admin-kas/nasabah/delete/' + no);
-    });
-
-    // Tambah button
-    $('.tambah-btn').on('click', function () {
-        var no = $(this).data('no');
-        $.ajax({
-            url: '/admin-kas/nasabah/edit/' + no,
-            method: 'GET',
-            success: function (data) {
-                // Populate the modal with data
-                $('#tambahNo').val(data.no);
-                // $('#editNama').val(data.nama);
-                // $('#editPokok').val(data.pokok);
-                // $('#editBunga').val(data.bunga);
-                // $('#editDenda').val(data.denda);
-                // $('#editTotal').val(data.total);
-                // $('#editKeterangan').val(data.keterangan);
-                // $('#editTtd').val(data.ttd);
-                // $('#editKembali').val(data.kembali);
-                // $('#editCabang').val(data.nama_cabang);
-                // $('#editWilayah').val(data.nama_kantorkas);
-                // $('#editAccountOfficer').val(data.id_account_officer);
-                // $('#detailAdminKas').val(data.adminKas ? data.adminKas.name : '');
-
-                // Set the form action to the update route with the correct no
-                $('#editForm').attr('action', '/admin-kas/nasabah/update/' + no);
-                $('#editForm').find('input[name="_method"]').val('PUT'); // Set the method to PUT
-
-
-                // Menampilkan modal
-                $('#editModal').modal('show');
-            },
-            error: function (xhr) {
-                alert('Terjadi kesalahan saat memuat data.');
-            }
-        });
-    });
     function openPdf(url) {
         window.open(url);
     }
-
-    // Calculate total for add form
-    function calculateAddTotal() {
-        var pokok = parseFloat($('#addPokok').val()) || 0;
-        var bunga = parseFloat($('#addBunga').val()) || 0;
-        var denda = parseFloat($('#addDenda').val()) || 0;
-        var total = pokok + bunga + denda;
-        $('#addTotal').val(total);
-    }
-
-    // Calculate total for edit form
-    function calculateEditTotal() {
-        var pokok = parseFloat($('#editPokok').val()) || 0;
-        var bunga = parseFloat($('#editBunga').val()) || 0;
-        var denda = parseFloat($('#editDenda').val()) || 0;
-        var total = pokok + bunga + denda;
-        $('#editTotal').val(total);
-    }
-
-    // Attach events for calculating total on input change
-    $('#addPokok, #addBunga, #addDenda').on('input', calculateAddTotal);
-    $('#editPokok, #editBunga, #editDenda').on('input', calculateEditTotal);
 </script>
 
 @endsection

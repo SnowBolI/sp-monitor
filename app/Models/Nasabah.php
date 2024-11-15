@@ -28,6 +28,7 @@ class Nasabah extends Model
         'total',
         'account_officer',
         'keterangan',
+        'tanggal_jtp',
         // 'ttd',
         // 'kembali',
         'id_cabang',
@@ -71,5 +72,10 @@ class Nasabah extends Model
         return $this->belongsTo(User::class, 'id_admin_kas');
     }
 
+    public function kunjungan()
+    {
+        return $this->hasMany(Kunjungan::class, 'no_nasabah', 'no');
+    }
+    
     // Relasi-relasi lain yang mungkin dimiliki oleh Nasabah
 }
