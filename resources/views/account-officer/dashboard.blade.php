@@ -68,7 +68,7 @@
                 <span class="tingkat-{{ $suratPeringatan->tingkat }}">
                 {{-- Optional visual indicators here --}}
             </span>
-            Tingkat {{ $suratPeringatan->tingkat }}
+            {{ $suratPeringatan->kategori}} tingkat {{ $suratPeringatan->tingkat }}
                 </td>
                 <td>{{ $suratPeringatan->diserahkan ?? 'Belum ada Data' }}</td>
                 <!-- <td>

@@ -146,57 +146,69 @@ ul {
 /* Menampilkan dropdown */
 .show {display: block;}
 
-.warning-indicators {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-}
-
 .sp-indicators,
 .somasi-indicators,
 .pendampingan-indicators {
     display: flex;
-    gap: 5px;
+    flex-direction: row;
+    justify-content: center; /* Untuk meratakan elemen ke tengah secara horizontal */
+    align-items: center; /* Untuk meratakan elemen secara vertikal */
+    gap: 10px; /* Menambah jarak antar elemen */
+    margin: 20px 0; /* Memberi jarak atas dan bawah */
 }
 
-/* SP Styles (Circles) */
-.tingkat-1, .tingkat-2, .tingkat-3 {
-    width: 12px;
-    height: 12px;
+/* Base indicator styles */
+[class*="-indicators"] span {
+    width: 15px; /* Perbesar elemen */
+    height: 15px; /* Perbesar elemen */
+    display: inline-block;
+    cursor: pointer;
+}
+
+/* SP Indicators (Circles) */
+.sp-indicators span {
     border-radius: 50%;
-    display: inline-block;
-    cursor: pointer;
 }
 
-.tingkat-1 { background-color: green; }
-.tingkat-2 { background-color: orange; }
-.tingkat-3 { background-color: red; }
-
-/* Somasi Style (Square) */
-.somasi {
-    width: 12px;
-    height: 12px;
-    background-color: #8B0000;
-    display: inline-block;
-    cursor: pointer;
+/* Somasi Indicators (Squares) */
+.somasi-indicators span {
+    border-radius: 0;
 }
 
-/* Pendampingan Style (Triangle) */
-.pendampingan {
+/* Pendampingan Indicators (Triangles) */
+.pendampingan-indicators span {
     width: 0;
     height: 0;
-    border-left: 8px solid transparent;
-    border-right: 8px solid transparent;
-    border-bottom: 14px solid #4B0082;
-    display: inline-block;
-    cursor: pointer;
+    border-left: 7.5px solid transparent; /* Perbesar segitiga */
+    border-right: 7.5px solid transparent; /* Perbesar segitiga */
+    border-bottom: 15px solid;
+    background-color: transparent !important;
 }
 
-/* Hover effect for all indicators */
-.tingkat-1:hover, .tingkat-2:hover, .tingkat-3:hover,
-.somasi:hover, .pendampingan:hover {
-    transform: scale(1.2);
-    transition: transform 0.2s;
+/* Level colors for circles and squares */
+[class*="-indicators"] .tingkat-1 {
+    background-color: green;
+}
+
+[class*="-indicators"] .tingkat-2 {
+    background-color: orange;
+}
+
+[class*="-indicators"] .tingkat-3 {
+    background-color: red;
+}
+
+/* Triangle colors */
+.pendampingan-indicators .tingkat-1 {
+    border-bottom-color: green;
+}
+
+.pendampingan-indicators .tingkat-2 {
+    border-bottom-color: orange;
+}
+
+.pendampingan-indicators .tingkat-3 {
+    border-bottom-color: red;
 }
 
     .dashboard-container {

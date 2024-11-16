@@ -99,7 +99,7 @@ class AccountOfficerController extends Controller
 
 
     $suratPeringatans = SuratPeringatan::where('id_account_officer', $currentUser->id)
-    ->select('id_peringatan', 'no', 'tingkat', 'diserahkan', 'bukti_gambar', 'scan_pdf')
+    ->select('id_peringatan', 'kategori', 'no', 'tingkat', 'diserahkan', 'bukti_gambar', 'scan_pdf')
     ->latest('diserahkan')
     ->get();
     $cabangs = Cabang::all();

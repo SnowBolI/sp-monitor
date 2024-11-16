@@ -81,66 +81,183 @@
         <td>{{ $nasabah->total }}</td>
         <td>{{ $nasabah->keterangan }}</td>
         <td>
-            @php
-            $matchingSp = $suratPeringatans->where('no', $nasabah->no)->sortByDesc('dibuat')->values();
-            $totalSp = $matchingSp->count();
-            @endphp
+            <!-- Untuk SP -->
+@php
+$matchingSp = $suratPeringatans->where('no', $nasabah->no)
+                              ->where('kategori', 'SP')
+                              ->sortByDesc('dibuat')
+                              ->values();
+$totalSp = $matchingSp->count();
+@endphp
 
-            @if($totalSp > 0)
-            <div class="sp-indicators">
-                @for($i = $totalSp - 1; $i >= 0; $i--)
-                <span class="tingkat-{{ $matchingSp[$i]->tingkat }}"
-                    title="Tingkat {{ $matchingSp[$i]->tingkat }} - {{ $matchingSp[$i]->dibuat }}"
-                    data-toggle="modal" data-target="#modalDetail{{ $index }}-{{ $i }}">
-                </span>
+@if($totalSp > 0)
+<div class="sp-indicators">
+    @for($i = $totalSp - 1; $i >= 0; $i--)
+    <span class="tingkat-{{ $matchingSp[$i]->tingkat }}"
+        title="SP Tingkat {{ $matchingSp[$i]->tingkat }} - {{ $matchingSp[$i]->dibuat }}"
+        data-toggle="modal" data-target="#modalDetailSp{{ $index }}-{{ $i }}">
+    </span>
 
-                <!-- Modal Detail SP -->
-                <div class="modal fade" id="modalDetail{{ $index }}-{{ $i }}" tabindex="-1" role="dialog"
-                    aria-labelledby="modalDetailLabel{{ $index }}-{{ $i }}" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="modalDetailLabel{{ $index }}-{{ $i }}">Surat Peringatan {{
-                                    $matchingSp[$i]->tingkat }}</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <!-- Menampilkan detail dari surat_peringatans -->
-                                <p>No: {{ $matchingSp[$i]->no }}</p>
-                                <p>Nama: {{ $matchingSp[$i]->nama }}</p>
-                                <p>Tingkat: {{ $matchingSp[$i]->tingkat }}</p>
-                                <p>Dibuat: {{ $matchingSp[$i]->dibuat }}</p>
-                                <p>Diserahkan: {{ $matchingSp[$i]->diserahkan }}</p>
-                                <p>Kembali: {{ $matchingSp[$i]->kembali }}</p>
-
-                                <!-- Menampilkan Bukti Gambar -->
-                                @if($matchingSp[$i]->bukti_gambar)
-                                <p>Bukti Gambar:</p>
-                                <img src="{{ asset('storage/'.$matchingSp[$i]->bukti_gambar) }}"
-                                    alt="Bukti Gambar" class="img-fluid">
-                                @endif
-
-                                <!-- Menampilkan Scan PDF -->
-                                @if($matchingSp[$i]->scan_pdf)
-                                <p>Scan PDF:</p>
-
-                                <button onclick="openPdf('{{ asset('storage/'.$matchingSp[$i]->scan_pdf) }}')" class="btn btn-primary">Lihat PDF</button>
-                                @endif
-                                
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            </div>
-                        </div>
-                    </div>
+    <!-- Modal Detail SP -->
+    <div class="modal fade" id="modalDetailSp{{ $index }}-{{ $i }}" tabindex="-1" role="dialog"
+        aria-labelledby="modalDetailLabelSp{{ $index }}-{{ $i }}" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalDetailLabelSp{{ $index }}-{{ $i }}">Surat Peringatan {{
+                        $matchingSp[$i]->tingkat }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
-                @endfor
+                <div class="modal-body">
+                    <p>No: {{ $matchingSp[$i]->no }}</p>
+                    <p>Nama: {{ $matchingSp[$i]->nama }}</p>
+                    <p>Tingkat: {{ $matchingSp[$i]->tingkat }}</p>
+                    <p>Dibuat: {{ $matchingSp[$i]->dibuat }}</p>
+                    <p>Diserahkan: {{ $matchingSp[$i]->diserahkan }}</p>
+                    <p>Kembali: {{ $matchingSp[$i]->kembali }}</p>
+
+                    @if($matchingSp[$i]->bukti_gambar)
+                    <p>Bukti Gambar:</p>
+                    <img src="{{ asset('storage/'.$matchingSp[$i]->bukti_gambar) }}"
+                        alt="Bukti Gambar" class="img-fluid">
+                    @endif
+
+                    @if($matchingSp[$i]->scan_pdf)
+                    <p>Scan PDF:</p>
+                    <button onclick="openPdf('{{ asset('storage/'.$matchingSp[$i]->scan_pdf) }}')" class="btn btn-primary">Lihat PDF</button>
+                    @endif
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
             </div>
-            @else
-            N/A
-            @endif
+        </div>
+    </div>
+    @endfor
+</div>
+@else
+N/A
+@endif
+
+<!-- Untuk Somasi -->
+@php
+$matchingSomasi = $suratPeringatans->where('no', $nasabah->no)
+                                  ->where('kategori', 'Somasi')
+                                  ->sortByDesc('dibuat')
+                                  ->values();
+$totalSomasi = $matchingSomasi->count();
+@endphp
+
+@if($totalSomasi > 0)
+<div class="somasi-indicators">
+    @for($i = $totalSomasi - 1; $i >= 0; $i--)
+    <span class="tingkat-{{ $matchingSomasi[$i]->tingkat }}"
+        title="Somasi Tingkat {{ $matchingSomasi[$i]->tingkat }} - {{ $matchingSomasi[$i]->dibuat }}"
+        data-toggle="modal" data-target="#modalDetailSomasi{{ $index }}-{{ $i }}">
+    </span>
+
+    <!-- Modal Detail Somasi -->
+    <div class="modal fade" id="modalDetailSomasi{{ $index }}-{{ $i }}" tabindex="-1" role="dialog"
+        aria-labelledby="modalDetailLabelSomasi{{ $index }}-{{ $i }}" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalDetailLabelSomasi{{ $index }}-{{ $i }}">Somasi {{
+                        $matchingSomasi[$i]->tingkat }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>No: {{ $matchingSomasi[$i]->no }}</p>
+                    <p>Nama: {{ $matchingSomasi[$i]->nama }}</p>
+                    <p>Tingkat: {{ $matchingSomasi[$i]->tingkat }}</p>
+                    <p>Dibuat: {{ $matchingSomasi[$i]->dibuat }}</p>
+                    <p>Diserahkan: {{ $matchingSomasi[$i]->diserahkan }}</p>
+                    <p>Kembali: {{ $matchingSomasi[$i]->kembali }}</p>
+
+                    @if($matchingSomasi[$i]->bukti_gambar)
+                    <p>Bukti Gambar:</p>
+                    <img src="{{ asset('storage/'.$matchingSomasi[$i]->bukti_gambar) }}"
+                        alt="Bukti Gambar" class="img-fluid">
+                    @endif
+
+                    @if($matchingSomasi[$i]->scan_pdf)
+                    <p>Scan PDF:</p>
+                    <button onclick="openPdf('{{ asset('storage/'.$matchingSomasi[$i]->scan_pdf) }}')" class="btn btn-primary">Lihat PDF</button>
+                    @endif
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endfor
+</div>
+@else
+@endif
+
+<!-- Untuk Pendampingan -->
+@php
+$matchingPendampingan = $suratPeringatans->where('no', $nasabah->no)
+                                        ->where('kategori', 'Pendampingan')
+                                        ->sortByDesc('dibuat')
+                                        ->values();
+$totalPendampingan = $matchingPendampingan->count();
+@endphp
+
+@if($totalPendampingan > 0)
+<div class="pendampingan-indicators">
+    @for($i = $totalPendampingan - 1; $i >= 0; $i--)
+    <span class="tingkat-{{ $matchingPendampingan[$i]->tingkat }}"
+        title="Pendampingan Tingkat {{ $matchingPendampingan[$i]->tingkat }} - {{ $matchingPendampingan[$i]->dibuat }}"
+        data-toggle="modal" data-target="#modalDetailPendampingan{{ $index }}-{{ $i }}">
+    </span>
+
+    <!-- Modal Detail Pendampingan -->
+    <div class="modal fade" id="modalDetailPendampingan{{ $index }}-{{ $i }}" tabindex="-1" role="dialog"
+        aria-labelledby="modalDetailLabelPendampingan{{ $index }}-{{ $i }}" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalDetailLabelPendampingan{{ $index }}-{{ $i }}">Pendampingan {{
+                        $matchingPendampingan[$i]->tingkat }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>No: {{ $matchingPendampingan[$i]->no }}</p>
+                    <p>Nama: {{ $matchingPendampingan[$i]->nama }}</p>
+                    <p>Tingkat: {{ $matchingPendampingan[$i]->tingkat }}</p>
+                    <p>Dibuat: {{ $matchingPendampingan[$i]->dibuat }}</p>
+                    <p>Diserahkan: {{ $matchingPendampingan[$i]->diserahkan }}</p>
+                    <p>Kembali: {{ $matchingPendampingan[$i]->kembali }}</p>
+
+                    @if($matchingPendampingan[$i]->bukti_gambar)
+                    <p>Bukti Gambar:</p>
+                    <img src="{{ asset('storage/'.$matchingPendampingan[$i]->bukti_gambar) }}"
+                        alt="Bukti Gambar" class="img-fluid">
+                    @endif
+
+                    @if($matchingPendampingan[$i]->scan_pdf)
+                    <p>Scan PDF:</p>
+                    <button onclick="openPdf('{{ asset('storage/'.$matchingPendampingan[$i]->scan_pdf) }}')" class="btn btn-primary">Lihat PDF</button>
+                    @endif
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endfor
+</div>
+@else
+@endif
 
         </td>
         <td>

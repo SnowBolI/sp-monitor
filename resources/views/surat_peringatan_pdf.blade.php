@@ -71,7 +71,8 @@
             <tr>
                 <th>Rekening</th>
                 <th>Nama</th>
-                <th>SP</th>
+                <th>Progress</th>
+                <th>Tingkat</th>
                 <th>Dibuat</th>
                 <th>Diserahkan</th>
                 <th>Kembali</th>
@@ -83,6 +84,7 @@
                 <tr>
                     <td>{{ $suratPeringatan->no }}</td>
                     <td>{{ $suratPeringatan->nasabah->nama }}</td>
+                    <td>{{ $suratPeringatan->kategori }}</td>
                     <td>{{ $suratPeringatan->tingkat }}</td>
                     <td>{{ \Carbon\Carbon::parse($suratPeringatan->created_at)->format('d-m-Y') }}</td>
                     <td>{{ \Carbon\Carbon::parse($suratPeringatan->diserahkan)->format('d-m-Y') }}</td>
