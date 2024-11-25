@@ -6,6 +6,7 @@ use App\Http\Controllers\MobileLoginController;
 use App\Http\Controllers\MobileMonitoringController;
 use App\Http\Controllers\MobileRegisterController;
 use App\Http\Controllers\MobileSuratPeringatanController;
+use App\Http\Controllers\MobileKunjunganController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\RegisteredUserController;
@@ -30,7 +31,7 @@ Route::post('registermobile', [MobileRegisterController::class, 'register']);
 //login
 Route::post('loginmobile',[MobileLoginController::class, 'login']);
 
-Route::middleware(['auth.with.api.token:Direksi,Kepala Cabang,Supervisor,Admin Kas,Account Officer,Super Admin'])->group(function () {
+Route::middleware(['auth.with.api.token:Direksi,Kepala Cabang,Kepala Bagian,Supervisor,Admin Kas,Account Officer,Super Admin'])->group(function () {
     Route::get('usermobile',[MobileAccountController::class, 'getUserDetails']);
     Route::post('logoutmobile', [MobileAccountController::class, 'logout']);
     //suratperingatan
@@ -53,6 +54,12 @@ Route::middleware(['auth.with.api.token:Direksi,Kepala Cabang,Supervisor,Admin K
     Route::get('alldata', [MobileAdminController::class, 'getAllData']);
     Route::put('user/update/{id}', [MobileAdminController::class, 'updateUser']);
     Route::get('usermobileadmin',[MobileAdminController::class, 'getUserAdmin']);
+    
+        //kunjungan
+    Route::get('kunjungan/get/{no_nasabah}', [MobileKunjunganController::class, 'getKunjunganList']);
+    Route::get('kunjungan/gambar/{filename}', [MobileKunjunganController::class, 'serveImage']);
+    Route::post('kunjungan/tambah', [MobileKunjunganController::class, 'tambahKunjungan']);
+    Route::get('kunjungan/list', [MobileKunjunganController::class, 'getNasabahKunjungan']);
 
 
 });

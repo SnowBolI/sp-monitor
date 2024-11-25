@@ -87,7 +87,7 @@
                 <!-- Untuk SP -->
 @php
 $matchingSp = $suratPeringatans->where('no', $nasabah->no)
-                              ->where('kategori', 'SP')
+                              ->where('kategori', 'Peringatan')
                               ->sortByDesc('dibuat')
                               ->values();
 $totalSp = $matchingSp->count();
@@ -390,7 +390,7 @@ $totalPendampingan = $matchingPendampingan->count();
                     <div class="form-group">
                         <label for="addTingkat">Kategori</label>
                         <select class="form-control" id="addSp" name="kategori" required>
-                            <option value="SP">Surat Peringatan</option>
+                            <option value="Peringatan">Surat Peringatan</option>
                             <option value="Somasi">Somasi</option>
                             <option value="Pendampingan">Pendampingan</option>
                         </select>
@@ -469,6 +469,10 @@ $totalPendampingan = $matchingPendampingan->count();
                         <textarea class="form-control" id="editKeterangan" name="keterangan" required></textarea>
                     </div>
                     <div class="form-group">
+                    <label for="editTanggal">Tanggal Jatuh Tempo</label>
+                    <input type="datetime-local" class="form-control" id="editTanggal" name="tanggal_jtp" required>
+                </div>
+                    <div class="form-group">
                         <label for="editCabang">Cabang</label>
                         <select class="form-control" id="editCabang" name="id_cabang" required>
                             @foreach($cabangs as $cabang)
@@ -544,8 +548,8 @@ $totalPendampingan = $matchingPendampingan->count();
                     <input type="number" class="form-control" id="detailTotal" name="total" readonly>
                 </div>
                 <div class="form-group">
-                    <label for="detailJtp">JTP</label>
-                    <input type="date" class="form-control" id="detailJTP" name="tanggal_jtp" readonly>
+                    <label for="detailJTP">JTP</label>
+                    <input type="text" class="form-control" id="detailJTP" name="tanggal_jtp" readonly>
                 </div>
                 <div class="form-group">
                     <label for="detailKeterangan">Keterangan</label>
@@ -567,6 +571,36 @@ $totalPendampingan = $matchingPendampingan->count();
                 <div class="form-group">
                     <label for="detailAdminKas">Admin Kas</label>
                     <input type="text" class="form-control" id="detailAdminKas" readonly>
+                </div>
+            <div class="kunjungan-section mt-4">
+                    <h5>Riwayat Kunjungan</h5>
+                    <div class="recent-visits mb-3">
+                        <h6>5 Kunjungan Terbaru</h6>
+                        <div id="recentVisitsList" class="visit-list">
+                            <div class="text-center">
+                                <div class="spinner-border" role="status">
+                                    <span class="sr-only">Loading...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Show All Button -->
+                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#allVisits" 
+                            aria-expanded="false" aria-controls="allVisits" id="showAllVisitsBtn">
+                        Lihat Semua Kunjungan
+                    </button>
+
+                    <!-- All Visits Collapsible Section -->
+                    <div class="collapse" id="allVisits">
+                        <div id="allVisitsList" class="visit-list mt-3">
+                            <div class="text-center">
+                                <div class="spinner-border" role="status">
+                                    <span class="sr-only">Loading...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -721,9 +755,8 @@ window.onclick = function(event) {
                 $('#editBunga').val(data.bunga);
                 $('#editDenda').val(data.denda);
                 $('#editTotal').val(data.total);
+                $('#editTanggal').val(data.tanggal_jtp);
                 $('#editKeterangan').val(data.keterangan);
-                $('#editTtd').val(data.ttd);
-                $('#editKembali').val(data.kembali);
                 $('#editCabang').val(data.nama_cabang);
                 $('#editWilayah').val(data.nama_kantorkas);
                 $('#editAccountOfficer').val(data.id_account_officer);
@@ -742,32 +775,154 @@ window.onclick = function(event) {
             }
         });
     });
+    
+    // Tambahkan event handler untuk modal hide
+$('#detailModal').on('hide.bs.modal', function () {
+    // Clear semua konten
+    $('#recentVisitsList').empty();
+    $('#allVisitsList').empty();
+    $('#allVisits').removeClass('show');
+    
+    // Reset form fields
+    $('#detailNo').val('');
+    $('#detailNama').val('');
+    $('#detailPokok').val('');
+    $('#detailBunga').val('');
+    $('#detailDenda').val('');
+    $('#detailTotal').val('');
+    $('#detailKeterangan').val('');
+    $('#detailCabang').val('');
+    $('#detailWilayah').val('');
+    $('#detailAccountOfficer').val('');
+    $('#detailAdminKas').val('');
+});
 
-    // Detail button click event
-    $('.detail-btn').on('click', function () {
-        var no = $(this).data('no');
-        var nasabah = @json($nasabahs -> keyBy('no'));
-        var data = nasabah[no];
+// Modified detail button click handler
+$('.detail-btn').on('click', function () {
+    var no = $(this).data('no');
+    var nasabah = @json($nasabahs->keyBy('no'));
+    var data = nasabah[no];
+    
+    // Clear previous content first
+    $('#recentVisitsList').empty();
+    $('#allVisitsList').empty();
+    $('#allVisits').removeClass('show');
+    
+    // Fill in basic details
+    $('#detailNo').val(data.no);
+    $('#detailNama').val(data.nama);
+    $('#detailPokok').val(data.pokok);
+    $('#detailBunga').val(data.bunga);
+    $('#detailDenda').val(data.denda);
+    $('#detailTotal').val(data.total);
+    $('#detailKeterangan').val(data.keterangan);
+    $('#detailCabang').val(data.cabang.nama_cabang);
+    $('#detailWilayah').val(data.kantorkas.nama_kantorkas);
+    $('#detailAccountOfficer').val(data.account_officer ? data.account_officer.name : '');
+    $('#detailAdminKas').val(data.admin_kas ? data.admin_kas.name : '');
+    
+    // Load recent visits with cache buster
+    loadRecentVisits(no);
+});
 
+// Show all visits button click event
+$('#showAllVisitsBtn').on('click', function() {
+    const no = $('#detailNo').val();
+    if (!$('#allVisits').hasClass('show')) {
+        // Only load if we're expanding the section
+        loadAllVisits(no);
+    }
+    // Toggle the collapse
+    $('#allVisits').toggleClass('show');
+});
 
-        $('#detailNo').val(data.no);
-        $('#detailNama').val(data.nama);
-        $('#detailPokok').val(data.pokok);
-        $('#detailBunga').val(data.bunga);
-        $('#detailDenda').val(data.denda);
-        $('#detailTotal').val(data.total);
-        $('#detailJtp').val(data.tanggal_jtp);
-        $('#detailKeterangan').val(data.keterangan);
-        // $('#detailTtd').val(data.ttd);
-        // $('#detailKembali').val(data.kembali);
-        $('#detailCabang').val(data.cabang.nama_cabang);
-        $('#detailKantorKas').val(data.kantorkas.nama_kantorkas);
-        // $('#detailAccountOfficer').val(data.user.name);
-        $('#detailAccountOfficer').val(data.account_officer ? data.account_officer.name : ''); // Mengakses nama account officer dari relasi account_officer
-        $('#detailAdminKas').val(data.admin_kas ? data.admin_kas.name : '');
-
-
+function loadRecentVisits(no) {
+    $('#recentVisitsList').html('<div class="text-center"><div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div></div>');
+    
+    $.ajax({
+        url: `/admin-kas/get-recent-visits/${no}?_=${new Date().getTime()}`, // Add cache buster
+        method: 'GET',
+        cache: false, // Disable AJAX caching
+        success: function(response) {
+            if (response.success) {
+                renderVisits(response.visits, '#recentVisitsList', { hideKoordinat: true });
+            } else {
+                $('#recentVisitsList').html('<p class="text-danger">Error: ' + (response.message || 'Unknown error') + '</p>');
+            }
+        },
+        error: function(xhr) {
+            console.error('Ajax error:', xhr);
+            $('#recentVisitsList').html('<p class="text-danger">Error loading visits. Status: ' + xhr.status + '</p>');
+        }
     });
+}
+
+function loadAllVisits(no) {
+    $('#allVisitsList').html('<div class="text-center"><div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div></div>');
+    
+    $.ajax({
+        url: `/admin-kas/get-all-visits/${no}?_=${new Date().getTime()}`, // Add cache buster
+        method: 'GET',
+        cache: false, // Disable AJAX caching
+        success: function(response) {
+            if (response.success) {
+                renderVisits(response.visits, '#allVisitsList', { hideKoordinat: true });
+            } else {
+                $('#allVisitsList').html('<p class="text-danger">Error: ' + (response.message || 'Unknown error') + '</p>');
+            }
+        },
+        error: function(xhr) {
+            console.error('Ajax error:', xhr);
+            $('#allVisitsList').html('<p class="text-danger">Error loading visits. Status: ' + xhr.status + '</p>');
+        }
+    });
+}
+
+// Modified renderVisits function with unique IDs for images
+function renderVisits(visits, targetSelector, options = {}) {
+    if (!visits || visits.length === 0) {
+        $(targetSelector).html('<p class="text-muted">Belum ada data kunjungan</p>');
+        return;
+    }
+
+    const visitHTML = visits.map((visit, index) => {
+        const imageId = `visit-img-${visit.id}-${new Date().getTime()}-${index}`;
+        return `
+        <div class="visit-item card mb-2">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <p class="mb-1"><strong>Tanggal:</strong> ${formatDate(visit.tanggal)}</p>
+                        ${options.hideKoordinat ? '' : `<p class="mb-1"><strong>Koordinat:</strong> ${visit.koordinat || '-'}</p>`}
+                        <p class="mb-1"><strong>Keterangan:</strong> ${visit.keterangan || '-'}</p>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        ${visit.bukti_gambar 
+                            ? `<img id="${imageId}"
+                                   src="${visit.bukti_gambar}?_=${new Date().getTime()}" 
+                                   alt="Bukti Kunjungan" 
+                                   class="img-fluid rounded" 
+                                   style="max-height: 100px;"
+                                   onerror="this.onerror=null; this.src='/path/to/fallback-image.jpg';">`
+                            : '<span class="text-muted">Tidak ada gambar</span>'}
+                    </div>
+                </div>
+            </div>
+        </div>
+    `}).join('');
+
+    $(targetSelector).html(visitHTML);
+}
+
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('id-ID', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    });
+}
+
     new DataTable('#nasabah-table');
     function openPdf(url) {
         window.open(url);

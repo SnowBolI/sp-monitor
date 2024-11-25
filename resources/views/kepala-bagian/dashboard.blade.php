@@ -580,6 +580,37 @@ $totalPendampingan = $matchingPendampingan->count();
                     <input type="text" class="form-control" id="detailAdminKas" readonly>
                 </div>
             </div>
+            <div class="kunjungan-section mt-4">
+                    <h5>Riwayat Kunjungan</h5>
+                    <div class="recent-visits mb-3">
+                        <h6>5 Kunjungan Terbaru</h6>
+                        <div id="recentVisitsList" class="visit-list">
+                            <div class="text-center">
+                                <div class="spinner-border" role="status">
+                                    <span class="sr-only">Loading...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Show All Button -->
+                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#allVisits" 
+                            aria-expanded="false" aria-controls="allVisits" id="showAllVisitsBtn">
+                        Lihat Semua Kunjungan
+                    </button>
+
+                    <!-- All Visits Collapsible Section -->
+                    <div class="collapse" id="allVisits">
+                        <div id="allVisitsList" class="visit-list mt-3">
+                            <div class="text-center">
+                                <div class="spinner-border" role="status">
+                                    <span class="sr-only">Loading...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
             </div>
@@ -689,30 +720,152 @@ $totalPendampingan = $matchingPendampingan->count();
         });
     });
 
-    // Detail button click event
-    $('.detail-btn').on('click', function () {
-        var no = $(this).data('no');
-        var nasabah = @json($nasabahs -> keyBy('no'));
-        var data = nasabah[no];
+    // Tambahkan event handler untuk modal hide
+$('#detailModal').on('hide.bs.modal', function () {
+    // Clear semua konten
+    $('#recentVisitsList').empty();
+    $('#allVisitsList').empty();
+    $('#allVisits').removeClass('show');
+    
+    // Reset form fields
+    $('#detailNo').val('');
+    $('#detailNama').val('');
+    $('#detailPokok').val('');
+    $('#detailBunga').val('');
+    $('#detailDenda').val('');
+    $('#detailTotal').val('');
+    $('#detailKeterangan').val('');
+    $('#detailCabang').val('');
+    $('#detailWilayah').val('');
+    $('#detailAccountOfficer').val('');
+    $('#detailAdminKas').val('');
+});
 
+// Modified detail button click handler
+$('.detail-btn').on('click', function () {
+    var no = $(this).data('no');
+    var nasabah = @json($nasabahs->keyBy('no'));
+    var data = nasabah[no];
+    
+    // Clear previous content first
+    $('#recentVisitsList').empty();
+    $('#allVisitsList').empty();
+    $('#allVisits').removeClass('show');
+    
+    // Fill in basic details
+    $('#detailNo').val(data.no);
+    $('#detailNama').val(data.nama);
+    $('#detailPokok').val(data.pokok);
+    $('#detailBunga').val(data.bunga);
+    $('#detailDenda').val(data.denda);
+    $('#detailTotal').val(data.total);
+    $('#detailKeterangan').val(data.keterangan);
+    $('#detailCabang').val(data.cabang.nama_cabang);
+    $('#detailWilayah').val(data.kantorkas.nama_kantorkas);
+    $('#detailAccountOfficer').val(data.account_officer ? data.account_officer.name : '');
+    $('#detailAdminKas').val(data.admin_kas ? data.admin_kas.name : '');
+    
+    // Load recent visits with cache buster
+    loadRecentVisits(no);
+});
 
-        $('#detailNo').val(data.no);
-        $('#detailNama').val(data.nama);
-        $('#detailPokok').val(data.pokok);
-        $('#detailBunga').val(data.bunga);
-        $('#detailDenda').val(data.denda);
-        $('#detailTotal').val(data.total);
-        $('#detailKeterangan').val(data.keterangan);
-        // $('#detailTtd').val(data.ttd);
-        // $('#detailKembali').val(data.kembali);
-        $('#detailCabang').val(data.cabang.nama_cabang);
-        $('#detailKantorKas').val(data.kantorkas.nama_kantorkas);
-        // $('#detailAccountOfficer').val(data.user.name);
-        $('#detailAccountOfficer').val(data.account_officer ? data.account_officer.name : ''); // Mengakses nama account officer dari relasi account_officer
-        $('#detailAdminKas').val(data.admin_kas ? data.admin_kas.name : '');
+// Show all visits button click event
+$('#showAllVisitsBtn').on('click', function() {
+    const no = $('#detailNo').val();
+    if (!$('#allVisits').hasClass('show')) {
+        // Only load if we're expanding the section
+        loadAllVisits(no);
+    }
+    // Toggle the collapse
+    $('#allVisits').toggleClass('show');
+});
 
-
+function loadRecentVisits(no) {
+    $('#recentVisitsList').html('<div class="text-center"><div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div></div>');
+    
+    $.ajax({
+        url: `/kepala-bagian/get-recent-visits/${no}?_=${new Date().getTime()}`, // Add cache buster
+        method: 'GET',
+        cache: false, // Disable AJAX caching
+        success: function(response) {
+            if (response.success) {
+                renderVisits(response.visits, '#recentVisitsList');
+            } else {
+                $('#recentVisitsList').html('<p class="text-danger">Error: ' + (response.message || 'Unknown error') + '</p>');
+            }
+        },
+        error: function(xhr) {
+            console.error('Ajax error:', xhr);
+            $('#recentVisitsList').html('<p class="text-danger">Error loading visits. Status: ' + xhr.status + '</p>');
+        }
     });
+}
+
+function loadAllVisits(no) {
+    $('#allVisitsList').html('<div class="text-center"><div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div></div>');
+    
+    $.ajax({
+        url: `/kepala-bagian/get-all-visits/${no}?_=${new Date().getTime()}`, // Add cache buster
+        method: 'GET',
+        cache: false, // Disable AJAX caching
+        success: function(response) {
+            if (response.success) {
+                renderVisits(response.visits, '#allVisitsList');
+            } else {
+                $('#allVisitsList').html('<p class="text-danger">Error: ' + (response.message || 'Unknown error') + '</p>');
+            }
+        },
+        error: function(xhr) {
+            console.error('Ajax error:', xhr);
+            $('#allVisitsList').html('<p class="text-danger">Error loading visits. Status: ' + xhr.status + '</p>');
+        }
+    });
+}
+
+// Modified renderVisits function with unique IDs for images
+function renderVisits(visits, targetSelector) {
+    if (!visits || visits.length === 0) {
+        $(targetSelector).html('<p class="text-muted">Belum ada data kunjungan</p>');
+        return;
+    }
+
+    const visitHTML = visits.map((visit, index) => {
+        const imageId = `visit-img-${visit.id}-${new Date().getTime()}-${index}`; // Create unique ID
+        return `
+        <div class="visit-item card mb-2">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <p class="mb-1"><strong>Tanggal:</strong> ${formatDate(visit.tanggal)}</p>
+                        <p class="mb-1"><strong>Koordinat:</strong> ${visit.koordinat || '-'}</p>
+                        <p class="mb-1"><strong>Keterangan:</strong> ${visit.keterangan || '-'}</p>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        ${visit.bukti_gambar 
+                            ? `<img id="${imageId}"
+                                   src="${visit.bukti_gambar}?_=${new Date().getTime()}" 
+                                   alt="Bukti Kunjungan" 
+                                   class="img-fluid rounded" 
+                                   style="max-height: 100px;"
+                                   onerror="this.onerror=null; this.src='/path/to/fallback-image.jpg';">`
+                            : '<span class="text-muted">Tidak ada gambar</span>'}
+                    </div>
+                </div>
+            </div>
+        </div>
+    `}).join('');
+
+    $(targetSelector).html(visitHTML);
+}
+
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('id-ID', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    });
+}
 
     // Delete button click event
     $('.delete-btn').on('click', function () {

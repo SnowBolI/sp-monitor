@@ -26,6 +26,12 @@ use App\Http\Controllers\FileController;
 | contains the "web" middleware group. Now create something great!
 |
 */
+// Loader Controller
+Route::get('/storage/bukti_gambar/{filename}', [FileController::class, 'getFile'])->name('file.get');
+Route::get('/storage/scan_pdf/{filename}', [FileController::class, 'getPdf'])->name('file.get');
+Route::get('/storage/kunjungan/{filename}', [FileController::class, 'getImage'])->name('file.get');
+
+
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -76,7 +82,10 @@ Route::prefix('direksi')
         Route::delete('nasabah/delete/{no}', [DireksiController::class, 'deleteNasabah'])->name('nasabah.delete');
         Route::post('/nasabah/surat', [DireksiController::class, 'addSurat'])->name('nasabah.surat');
         Route::get('/nasabah/cetak-pdf', [DireksiController::class, 'cetakPdf'])->name('nasabah.cetak-pdf');
-});
+        Route::get('/get-recent-visits/{no}', [DireksiController::class, 'getRecentVisits'])->name('visits.recent');
+        Route::get('/get-all-visits/{no}', [DireksiController::class, 'getAllVisits'])->name('visits.all');
+        
+    });
 
 Route::prefix('kepala-cabang')
     ->name('kepala-cabang.')
@@ -89,7 +98,8 @@ Route::prefix('kepala-cabang')
         Route::post('nasabah/add', [KepalaCabangController::class, 'addNasabah'])->name('nasabah.add');
         Route::delete('nasabah/delete/{no}', [KepalaCabangController::class, 'deleteNasabah'])->name('nasabah.delete');
         Route::get('/nasabah/cetak-pdf', [KepalaCabangController::class, 'cetakPdf'])->name('nasabah.cetak-pdf');
-        // Route::post('/nasabah/surat', [KepalaCabangController::class, 'addSurat'])->name('nasabah.surat');
+        Route::get('/get-recent-visits/{no}', [KepalaCabangController::class, 'getRecentVisits'])->name('visits.recent');
+        Route::get('/get-all-visits/{no}', [KepalaCabangController::class, 'getAllVisits'])->name('visits.all');
 });
 
 // Routes for supervisor
@@ -104,6 +114,8 @@ Route::prefix('supervisor')
         Route::post('nasabah/add', [SupervisorController::class, 'addNasabah'])->name('nasabah.add');
         Route::delete('nasabah/delete/{no}', [SupervisorController::class, 'deleteNasabah'])->name('nasabah.delete');
         Route::get('/nasabah/cetak-pdf', [SupervisorController::class, 'cetakPdf'])->name('nasabah.cetak-pdf');
+        Route::get('/get-recent-visits/{no}', [SupervisorController::class, 'getRecentVisits'])->name('visits.recent');
+        Route::get('/get-all-visits/{no}', [SupervisorController::class, 'getAllVisits'])->name('visits.all');
 });
 
 Route::prefix('admin-kas')
@@ -118,7 +130,9 @@ Route::prefix('admin-kas')
         Route::delete('nasabah/delete/{no}', [AdminKasController::class, 'deleteNasabah'])->name('nasabah.delete');
         Route::post('/nasabah/surat', [AdminKasController::class, 'addSurat'])->name('nasabah.surat');
         Route::post('/nasabah/import', [AdminKasController::class, 'importNasabah'])->name('nasabah.import');
-
+        Route::get('/nasabah/cetak-pdf', [AdminKasController::class, 'cetakPdf'])->name('nasabah.cetak-pdf');
+        Route::get('/get-recent-visits/{no}', [AdminKasController::class, 'getRecentVisits'])->name('visits.recent');
+        Route::get('/get-all-visits/{no}', [AdminKasController::class, 'getAllVisits'])->name('visits.all');
 
     });
 
@@ -145,6 +159,8 @@ Route::prefix('kepala-bagian')
         Route::delete('nasabah/delete/{no}', [KepalaBagianController::class, 'deleteNasabah'])->name('nasabah.delete');
         Route::get('/nasabah/cetak-pdf', [KepalaBagianController::class, 'cetakPdf'])->name('nasabah.cetak-pdf');
         // Route::post('/nasabah/surat', [KepalaCabangController::class, 'addSurat'])->name('nasabah.surat');
+        Route::get('/get-recent-visits/{no}', [KepalaBagianController::class, 'getRecentVisits'])->name('visits.recent');
+        Route::get('/get-all-visits/{no}', [KepalaBagianController::class, 'getAllVisits'])->name('visits.all');
 });
 
 Route::prefix('super-admin')
@@ -164,7 +180,6 @@ Route::prefix('super-admin')
         Route::delete('key/delete/{key}', [SuperAdminController::class, 'deleteKey'])->name('key.delete');
         Route::put('/user/update/{id}', [SuperAdminController::class, 'update'])->name('user.update'); 
         Route::post('/keys/import', [SuperAdminController::class, 'importKeys'])->name('keys.import');
-        Route::get('/get-users-by-jabatan/{jabatanId}', 'SuperAdminController@getUsersByJabatan')->name('get-users-by-jabatan');
 });
 
 

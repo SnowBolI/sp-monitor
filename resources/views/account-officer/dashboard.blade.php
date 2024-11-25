@@ -89,7 +89,7 @@
             </td>
                 <td>
                     <!-- <button class="btn btn-primary btn-sm edit-btn" data-no="{{ $suratPeringatan->no }}" data-toggle="modal" data-target="#editModal">Edit</button> -->
-                    <!-- <button class="btn btn-info btn-sm detail-btn" data-no="{{ $nasabah->nama }}" data-toggle="modal" data-target="#detailModal">Detail</button> -->
+                    <button class="btn btn-info btn-sm detail-btn" data-no="{{ $nasabah->nama }}" data-toggle="modal" data-target="#detailModal">Detail</button>
                     <button class="btn btn-danger btn-sm delete-btn" data-id_peringatan="{{ $suratPeringatan->id_peringatan }}" data-toggle="modal" data-target="#deleteModal">Delete</button>
                 </td>
                 <td>{{ $nasabah->created_at }}</td>
@@ -203,6 +203,109 @@
     </div>
 </div>
 
+<!-- Modal for Detail -->
+<div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="detailModalLabel">Detail Data Nasabah</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="detailNo">No</label>
+                    <input type="text" class="form-control" id="detailNo" name="no" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="detailNama">Nama</label>
+                    <input type="text" class="form-control" id="detailNama" name="nama" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="detailPokok">Pokok</label>
+                    <input type="number" class="form-control" id="detailPokok" name="pokok" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="detailBunga">Bunga</label>
+                    <input type="number" class="form-control" id="detailBunga" name="bunga" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="detailDenda">Denda</label>
+                    <input type="number" class="form-control" id="detailDenda" name="denda" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="detailTotal">Total</label>
+                    <input type="number" class="form-control" id="detailTotal" name="total" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="detailKeterangan">Keterangan</label>
+                    <textarea class="form-control" id="detailKeterangan" name="keterangan" readonly></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="detailTtd">TTD</label>
+                    <input type="datetime-local" class="form-control" id="detailTtd" name="ttd" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="detailKembali">Kembali</label>
+                    <input type="datetime-local" class="form-control" id="detailKembali" name="kembali" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="detailCabang">Cabang</label>
+                    <input type="text" class="form-control" id="detailCabang" name="id_cabang" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="detailWilayah">Kantor Kas</label>
+                    <input type="text" class="form-control" id="detailWilayah" name="id_kantorkas" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="detailAccountOfficer">Account Officer</label>
+                    <input type="text" class="form-control" id="detailAccountOfficer" name="id_account_officer"
+                        readonly>
+                </div>
+                <div class="form-group">
+                    <label for="detailAdminKas">Admin Kas</label>
+                    <input type="text" class="form-control" id="detailAdminKas" readonly>
+                </div>
+                <div class="kunjungan-section mt-4">
+                    <h5>Riwayat Kunjungan</h5>
+                    <div class="recent-visits mb-3">
+                        <h6>5 Kunjungan Terbaru</h6>
+                        <div id="recentVisitsList" class="visit-list">
+                            <div class="text-center">
+                                <div class="spinner-border" role="status">
+                                    <span class="sr-only">Loading...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Show All Button -->
+                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#allVisits" 
+                            aria-expanded="false" aria-controls="allVisits" id="showAllVisitsBtn">
+                        Lihat Semua Kunjungan
+                    </button>
+
+                    <!-- All Visits Collapsible Section -->
+                    <div class="collapse" id="allVisits">
+                        <div id="allVisitsList" class="visit-list mt-3">
+                            <div class="text-center">
+                                <div class="spinner-border" role="status">
+                                    <span class="sr-only">Loading...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Modal for Delete -->
 <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -270,24 +373,143 @@
                             }
                         });
 
-        // Detail button click event
-        $('.detail-btn').on('click', function() {
-            var no = $(this).data('no');
-            var nasabah = @json($nasabahs->keyBy('nama'));
-            var data = nasabah[no];
-            
+        // Tambahkan event handler untuk modal hide
+$('#detailModal').on('hide.bs.modal', function () {
+    // Clear semua konten
+    $('#recentVisitsList').empty();
+    $('#allVisitsList').empty();
+    $('#allVisits').removeClass('show');
+    
+    // Reset form fields
+    $('#detailNo').val('');
+    $('#detailNama').val('');
+    $('#detailPokok').val('');
+    $('#detailBunga').val('');
+    $('#detailDenda').val('');
+    $('#detailTotal').val('');
+    $('#detailKeterangan').val('');
+    $('#detailCabang').val('');
+    $('#detailWilayah').val('');
+    $('#detailAccountOfficer').val('');
+    $('#detailAdminKas').val('');
+});
 
-            $('#detailNama').val(data.nama);
-            $('#detailTingkat').val(data.tingkat);
-            $('#detailTanggal').val(data.tanggal);
-            $('#detailPdf').val(data.pdf);
-            $('#detailGambar').val(data.bukti_gambar);
-            // $('#detailAccountOfficer').val(data.user.name);
-            $('#detailAccountOfficer').val(data.account_officer ? data.account_officer.name : ''); // Mengakses nama account officer dari relasi account_officer
-            // $('#detailAccountOfficer').val(data.admin_kas ? data.admin_kas.name : '');
+// Modified detail button click handler
+$('.detail-btn').on('click', function () {
+    var no = $(this).data('no');
+    var nasabah = @json($nasabahs->keyBy('no'));
+    var data = nasabah[no];
+    
+    // Clear previous content first
+    $('#recentVisitsList').empty();
+    $('#allVisitsList').empty();
+    $('#allVisits').removeClass('show');
+    
+    // Fill in basic details
+    $('#detailNo').val(data.no);
+    $('#detailNama').val(data.nama);
+    $('#detailPokok').val(data.pokok);
+    $('#detailBunga').val(data.bunga);
+    $('#detailDenda').val(data.denda);
+    $('#detailTotal').val(data.total);
+    $('#detailKeterangan').val(data.keterangan);
+    $('#detailCabang').val(data.cabang.nama_cabang);
+    $('#detailWilayah').val(data.kantorkas.nama_kantorkas);
+    $('#detailAccountOfficer').val(data.account_officer ? data.account_officer.name : '');
+    $('#detailAdminKas').val(data.admin_kas ? data.admin_kas.name : '');
+    
+    // Load recent visits with cache buster
+    loadRecentVisits(no);
+});
 
+// Show all visits button click event
+$('#showAllVisitsBtn').on('click', function() {
+    const no = $('#detailNo').val();
+    if (!$('#allVisits').hasClass('show')) {
+        // Only load if we're expanding the section
+        loadAllVisits(no);
+    }
+    // Toggle the collapse
+    $('#allVisits').toggleClass('show');
+});
 
-        });
+function loadRecentVisits(no) {
+    $('#recentVisitsList').html('<div class="text-center"><div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div></div>');
+    
+    $.ajax({
+        url: `/admin-kas/get-recent-visits/${no}?_=${new Date().getTime()}`, // Add cache buster
+        method: 'GET',
+        cache: false, // Disable AJAX caching
+        success: function(response) {
+            if (response.success) {
+                renderVisits(response.visits, '#recentVisitsList', { hideKoordinat: true });
+            } else {
+                $('#recentVisitsList').html('<p class="text-danger">Error: ' + (response.message || 'Unknown error') + '</p>');
+            }
+        },
+        error: function(xhr) {
+            console.error('Ajax error:', xhr);
+            $('#recentVisitsList').html('<p class="text-danger">Error loading visits. Status: ' + xhr.status + '</p>');
+        }
+    });
+}
+
+function loadAllVisits(no) {
+    $('#allVisitsList').html('<div class="text-center"><div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div></div>');
+    
+    $.ajax({
+        url: `/admin-kas/get-all-visits/${no}?_=${new Date().getTime()}`, // Add cache buster
+        method: 'GET',
+        cache: false, // Disable AJAX caching
+        success: function(response) {
+            if (response.success) {
+                renderVisits(response.visits, '#allVisitsList', { hideKoordinat: true });
+            } else {
+                $('#allVisitsList').html('<p class="text-danger">Error: ' + (response.message || 'Unknown error') + '</p>');
+            }
+        },
+        error: function(xhr) {
+            console.error('Ajax error:', xhr);
+            $('#allVisitsList').html('<p class="text-danger">Error loading visits. Status: ' + xhr.status + '</p>');
+        }
+    });
+}
+
+// Modified renderVisits function with unique IDs for images
+function renderVisits(visits, targetSelector, options = {}) {
+    if (!visits || visits.length === 0) {
+        $(targetSelector).html('<p class="text-muted">Belum ada data kunjungan</p>');
+        return;
+    }
+
+    const visitHTML = visits.map((visit, index) => {
+        const imageId = `visit-img-${visit.id}-${new Date().getTime()}-${index}`;
+        return `
+        <div class="visit-item card mb-2">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <p class="mb-1"><strong>Tanggal:</strong> ${formatDate(visit.tanggal)}</p>
+                        ${options.hideKoordinat ? '' : `<p class="mb-1"><strong>Koordinat:</strong> ${visit.koordinat || '-'}</p>`}
+                        <p class="mb-1"><strong>Keterangan:</strong> ${visit.keterangan || '-'}</p>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        ${visit.bukti_gambar 
+                            ? `<img id="${imageId}"
+                                   src="${visit.bukti_gambar}?_=${new Date().getTime()}" 
+                                   alt="Bukti Kunjungan" 
+                                   class="img-fluid rounded" 
+                                   style="max-height: 100px;"
+                                   onerror="this.onerror=null; this.src='/path/to/fallback-image.jpg';">`
+                            : '<span class="text-muted">Tidak ada gambar</span>'}
+                    </div>
+                </div>
+            </div>
+        </div>
+    `}).join('');
+
+    $(targetSelector).html(visitHTML);
+}
 
         // Delete button click event
         $('.delete-btn').on('click', function() {

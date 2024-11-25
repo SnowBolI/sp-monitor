@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Models\Nasabah;
+use App\Models\Kunjungan;
 use App\Models\PegawaiAccountOffice;
 use App\Imports\NasabahImport;
 use Illuminate\Support\Facades\Auth;
@@ -212,8 +213,7 @@ public function update(Request $request, $no)
             'bunga' => 'required|numeric',
             'denda' => 'required|numeric',
             'keterangan' => 'required',
-            'tanggal_jtp' => 'required|date',
-            'kembali' => 'required|date',
+            'tanggal_jtp' => 'required',
             'id_cabang' => 'required|integer',
             'id_kantorkas' => 'required|integer',
             'id_account_officer' => 'required|integer'
@@ -335,11 +335,16 @@ public function addSurat(Request $request)
 
         $accountOfficerId = $nasabah->id_account_officer;
 
-        // Handle limit
-        $existingEntries = SuratPeringatan::where('no', $suratData['no'])->count();
+        // Handle limit berdasarkan kategori
+        $existingEntriesForCategory = SuratPeringatan::where('no', $suratData['no'])
+            ->where('kategori', $suratData['kategori'])
+            ->count();
 
-        if ($existingEntries >= 3) {
-            return redirect()->back()->with('error', 'This Nasabah already has the maximum allowed Surat Peringatan entries (3).');
+        // Cek batas maksimum berdasarkan kategori
+        $maxEntries = 3; // Default maksimum 3
+        
+        if ($existingEntriesForCategory >= $maxEntries) {
+            return redirect()->back()->with('error', "This Nasabah already has the maximum allowed entries ({$maxEntries}) for kategori {$suratData['kategori']}.");
         }
 
         $duplicateTingkatKategori = SuratPeringatan::where('no', $suratData['no'])
@@ -352,7 +357,7 @@ public function addSurat(Request $request)
         }
 
         // Handle the PDF upload for 'scan_pdf'
-        if ($request->hasFile('scan_pdf')) {
+        if ($request->hasFile('scan_pdf')) {    
             $scanPdfPath = $request->file('scan_pdf')->store('scan_pdf', 'public');
             $suratData['scan_pdf'] = $scanPdfPath;
 
@@ -442,4 +447,58 @@ public function importNasabah(Request $request)
         return redirect()->back()->with('error', 'Terjadi kesalahan saat import: ' . $e->getMessage());
     }
 }
+
+public function getRecentVisits($no)
+{
+    try {
+        $visits = Kunjungan::where('no_nasabah', $no)
+            ->orderBy('tanggal', 'desc')
+            ->take(5)
+            ->get()
+            ->map(function ($visit) {
+                // Add full URL for image if it exists
+                if ($visit->bukti_gambar) {
+                    $visit->bukti_gambar = asset('storage/' . $visit->bukti_gambar);
+                }
+                return $visit;
+            });
+
+        return response()->json([
+            'success' => true,
+            'visits' => $visits
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error fetching recent visits'
+        ], 500);
+    }
+}
+
+public function getAllVisits($no)
+{
+    try {
+        $visits = Kunjungan::where('no_nasabah', $no)
+            ->orderBy('tanggal', 'desc')
+            ->get()
+            ->map(function ($visit) {
+                // Add full URL for image if it exists
+                if ($visit->bukti_gambar) {
+                    $visit->bukti_gambar = asset('storage/' . $visit->bukti_gambar);
+                }
+                return $visit;
+            });
+
+        return response()->json([
+            'success' => true,
+            'visits' => $visits
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error fetching all visits'
+        ], 500);
+    }
+}
+
 }

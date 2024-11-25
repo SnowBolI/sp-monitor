@@ -167,7 +167,7 @@ public function addNasabah(Request $request)
         }
 
         Log::info('File upload result', [
-            'path' => $buktiGambarPath ?? 'No path (upload likely failed)'
+        'path' => $buktiGambarPath ?? 'No path (upload likely failed)'
         ]);
 
         // Retrieve the Nasabah by name

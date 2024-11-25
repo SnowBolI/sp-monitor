@@ -11,7 +11,7 @@ class KantorKas extends Model
 
     protected $fillable = [
         'nama_kantorkas',
-        // tambahkan atribut tambahan jika diperlukan
+        // tambahkan atribut tambahan jika diperlukan   
     ];
 
     public $timestamps = false;

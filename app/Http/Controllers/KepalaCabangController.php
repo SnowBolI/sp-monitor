@@ -8,6 +8,7 @@ use App\Models\PegawaiAccountOffice;
 use App\Models\SuratPeringatan;
 use App\Models\Cabang;
 use App\Models\KantorKas;
+use App\Models\Kunjungan;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -242,7 +243,7 @@ public function cetakPdf(Request $request)
     $options = new Options();
     $options->set('isRemoteEnabled', true);
 
-    $logoPath = public_path('logobank.png'); 
+    $logoPath = 'logobank.png'; 
     $logoData = base64_encode(file_get_contents($logoPath));
     $logoSrc = 'data:image/png;base64,' . $logoData;
 
@@ -384,6 +385,59 @@ public function addNasabah(Request $request)
         ]);
 
         return response()->json(['error' => 'Failed to add data']);
+    }
+}
+
+public function getRecentVisits($no)
+{
+    try {
+        $visits = Kunjungan::where('no_nasabah', $no)
+            ->orderBy('tanggal', 'desc')
+            ->take(5)
+            ->get()
+            ->map(function ($visit) {
+                // Add full URL for image if it exists
+                if ($visit->bukti_gambar) {
+                    $visit->bukti_gambar = asset('storage/' . $visit->bukti_gambar);
+                }
+                return $visit;
+            });
+
+        return response()->json([
+            'success' => true,
+            'visits' => $visits
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error fetching recent visits'
+        ], 500);
+    }
+}
+
+public function getAllVisits($no)
+{
+    try {
+        $visits = Kunjungan::where('no_nasabah', $no)
+            ->orderBy('tanggal', 'desc')
+            ->get()
+            ->map(function ($visit) {
+                // Add full URL for image if it exists
+                if ($visit->bukti_gambar) {
+                    $visit->bukti_gambar = asset('storage/' . $visit->bukti_gambar);
+                }
+                return $visit;
+            });
+
+        return response()->json([
+            'success' => true,
+            'visits' => $visits
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error fetching all visits'
+        ], 500);
     }
 }
 

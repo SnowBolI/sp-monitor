@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Nasabah;
 use App\Models\PegawaiAccountOffice;
 use App\Models\SuratPeringatan;
+use App\Models\Kunjungan;
 use App\Models\Cabang;
 use App\Models\KantorKas;
 use App\Models\User;
@@ -427,6 +428,59 @@ public function searchNasabah(Request $request)
 
     // Return data nasabah dalam format yang sesuai untuk ditampilkan di frontend
     return response()->json($nasabahs); 
+}
+
+public function getRecentVisits($no)
+{
+    try {
+        $visits = Kunjungan::where('no_nasabah', $no)
+            ->orderBy('tanggal', 'desc')
+            ->take(5)
+            ->get()
+            ->map(function ($visit) {
+                // Add full URL for image if it exists
+                if ($visit->bukti_gambar) {
+                    $visit->bukti_gambar = asset('storage/' . $visit->bukti_gambar);
+                }
+                return $visit;
+            });
+
+        return response()->json([
+            'success' => true,
+            'visits' => $visits
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error fetching recent visits'
+        ], 500);
+    }
+}
+
+public function getAllVisits($no)
+{
+    try {
+        $visits = Kunjungan::where('no_nasabah', $no)
+            ->orderBy('tanggal', 'desc')
+            ->get()
+            ->map(function ($visit) {
+                // Add full URL for image if it exists
+                if ($visit->bukti_gambar) {
+                    $visit->bukti_gambar = asset('storage/' . $visit->bukti_gambar);
+                }
+                return $visit;
+            });
+
+        return response()->json([
+            'success' => true,
+            'visits' => $visits
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error fetching all visits'
+        ], 500);
+    }
 }
 
 }

@@ -230,10 +230,8 @@ public function dashboard(Request $request)
 
     $cabangs = Cabang::all();
     $kantorkas = KantorKas::all();
-    $kunjunganTerbaru = Kunjungan::select('');
-    $kunjunganSemua = Kunjungan::all();
 
-    return view('supervisor.dashboard', compact('title', 'accountOfficers', 'nasabahs', 'suratPeringatans', 'cabangs', 'kantorkas', 'currentUser', 'nasabahNames','kunjunganTerbaru','kunjunganSemua'));
+    return view('supervisor.dashboard', compact('title', 'accountOfficers', 'nasabahs', 'suratPeringatans', 'cabangs', 'kantorkas', 'currentUser', 'nasabahNames'));
 }
 
 public function show($no)
@@ -241,18 +239,19 @@ public function show($no)
     $nasabah = Nasabah::with([
         'cabang',
         'kantorkas',
+        'kunjungan',
         'account_officer',
         'admin_kas'
     ])->where('no', $no)->firstOrFail();
 
     // Get 5 most recent visits
-    $kunjunganTerbaru = Kunjungan::where('user_id', $nasabah->user_id)
+    $kunjunganTerbaru = Kunjungan::where('no_nasabah', $nasabah->user_id)
         ->orderBy('tanggal', 'desc')
         ->take(5)
         ->get();
 
     // Get all visits
-    $kunjunganSemua = Kunjungan::where('user_id', $nasabah->user_id)
+    $kunjunganSemua = Kunjungan::where('no_nasabah', $nasabah->user_id)
         ->orderBy('tanggal', 'desc')
         ->get();
 
@@ -445,6 +444,59 @@ public function addNasabah(Request $request)
         ]);
 
         return response()->json(['error' => 'Failed to add data']);
+    }
+}
+
+public function getRecentVisits($no)
+{
+    try {
+        $visits = Kunjungan::where('no_nasabah', $no)
+            ->orderBy('tanggal', 'desc')
+            ->take(5)
+            ->get()
+            ->map(function ($visit) {
+                // Add full URL for image if it exists
+                if ($visit->bukti_gambar) {
+                    $visit->bukti_gambar = asset('storage/' . $visit->bukti_gambar);
+                }
+                return $visit;
+            });
+
+        return response()->json([
+            'success' => true,
+            'visits' => $visits
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error fetching recent visits'
+        ], 500);
+    }
+}
+
+public function getAllVisits($no)
+{
+    try {
+        $visits = Kunjungan::where('no_nasabah', $no)
+            ->orderBy('tanggal', 'desc')
+            ->get()
+            ->map(function ($visit) {
+                // Add full URL for image if it exists
+                if ($visit->bukti_gambar) {
+                    $visit->bukti_gambar = asset('storage/' . $visit->bukti_gambar);
+                }
+                return $visit;
+            });
+
+        return response()->json([
+            'success' => true,
+            'visits' => $visits
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error fetching all visits'
+        ], 500);
     }
 }
 

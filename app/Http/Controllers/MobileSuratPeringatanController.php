@@ -13,53 +13,101 @@ use Illuminate\Validation\ValidationException;
 class MobileSuratPeringatanController extends Controller
 {
 
-
     public function getNasabahSP()
     {
         $user = Auth::user();
-        
+    
         if (!$user) {
             return response()->json(['error' => 'User not authenticated'], 401);
         }
     
-        if ($user->jabatan_id == 99) {
-            Log::info('Jabatan: admin - fetching all Surat Peringatan');
-            
-            // Mengambil data SuratPeringatan dan menambahkan nama nasabah langsung ke objek
-            $suratPeringatan = SuratPeringatan::select('surat_peringatans.*', 'nasabahs.nama')
-                                ->join('nasabahs', 'surat_peringatans.no', '=', 'nasabahs.no')
-                                ->whereNotNull('surat_peringatans.no')
-                                ->whereNull('surat_peringatans.bukti_gambar')
-                                ->get();
-            return response()->json($suratPeringatan, 200);
+        // Untuk Account Officer
+        $idUser = $user->id;
+        Log::info('Jabatan: account_officer - fetching Surat Peringatan for account_officer', ['id_account_officer' => $idUser]);
+    
+        // Mengambil semua data SuratPeringatan yang bukti_gambar masih kosong
+        $suratPeringatanRaw = SuratPeringatan::select('surat_peringatans.*', 'nasabahs.nama', 'surat_peringatans.kategori', 'surat_peringatans.tingkat')
+            ->join('nasabahs', 'surat_peringatans.no', '=', 'nasabahs.no')
+            ->where('surat_peringatans.id_account_officer', $idUser)
+            ->whereNotNull('surat_peringatans.no')
+            ->whereNull('surat_peringatans.bukti_gambar')
+            ->get();
+    
+        // Inisialisasi array untuk hasil akhir
+        $filteredSP = [];
+    
+        // Mengelompokkan data berdasarkan nasabah
+        $groupedByNasabah = $suratPeringatanRaw->groupBy('nama');
+    
+        foreach ($groupedByNasabah as $nasabahName => $suratNasabah) {
+            // Kelompokkan data berdasarkan kategori
+            $groupedByCategory = $suratNasabah->groupBy('kategori');
+    
+            // Logika prioritas: Peringatan > Somasi > Pendampingan
+            $priorities = ['Peringatan', 'Somasi', 'Pendampingan'];
+    
+            foreach ($priorities as $priorityCategory) {
+                // Jika ada surat untuk kategori saat ini (misalnya Peringatan, Somasi, Pendampingan)
+                if (isset($groupedByCategory[$priorityCategory])) {
+                    // Cari surat dengan tingkat terendah di kategori ini
+                    $suratTingkatTerendah = $groupedByCategory[$priorityCategory]->sortBy('tingkat')->first();
+    
+                    if ($suratTingkatTerendah) {
+                        // Masukkan ke dalam array filteredSP dan lanjutkan ke nasabah berikutnya
+                        $filteredSP[] = $suratTingkatTerendah;
+                        break; // Hanya tampilkan satu surat per nasabah
+                    }
+                }
+            }
         }
     
-        if ($user) {
-            $idUser = $user->id;
-            Log::info('Jabatan: account_officer - fetching Surat Peringatan for account_officer', ['id_account_officer' => $idUser]);
-    
-            // Mengambil data SuratPeringatan dan menambahkan nama nasabah langsung ke objek
-            $suratPeringatanRaw = SuratPeringatan::select('surat_peringatans.*', 'nasabahs.nama')
-                                ->join('nasabahs', 'surat_peringatans.no', '=', 'nasabahs.no')
-                                ->where('surat_peringatans.id_account_officer', $idUser)
-                                ->whereNotNull('surat_peringatans.no')
-                                ->whereNull('surat_peringatans.bukti_gambar')
-                                ->get();
-            
-    
-            Log::info('Jabatan: account_officer - fetching Surat Peringatan for account_officer', ['id_account_officer' => $suratPeringatanRaw]);
-    
-            $suratPeringatan = $suratPeringatanRaw->unique('nama');
-        
-        return response()->json($suratPeringatan->values()->all(), 200);
-        } else {
-            return response()->json(['error' => 'Account Officer not found for this user'], 403);
-        }
+        // Mengembalikan hasil
+        return response()->json(array_values($filteredSP), 200);
     }
+    // public function getNasabahSP()
+    // {
+    //     $user = Auth::user();
+        
+    //     if (!$user) {
+    //         return response()->json(['error' => 'User not authenticated'], 401);
+    //     }
     
-
-
-
+    //     if ($user->jabatan_id == 99) {
+    //         Log::info('Jabatan: admin - fetching all Surat Peringatan');
+            
+    //         // Mengambil data SuratPeringatan dan menambahkan nama nasabah langsung ke objek
+    //         $suratPeringatan = SuratPeringatan::select('surat_peringatans.*', 'nasabahs.nama')
+    //                             ->join('nasabahs', 'surat_peringatans.no', '=', 'nasabahs.no')
+    //                             ->whereNotNull('surat_peringatans.no')
+    //                             ->whereNull('surat_peringatans.bukti_gambar')
+    //                             ->get();
+    //         return response()->json($suratPeringatan, 200);
+    //     }
+    
+    //     if ($user) {
+    //         $idUser = $user->id;
+    //         Log::info('Jabatan: account_officer - fetching Surat Peringatan for account_officer', ['id_account_officer' => $idUser]);
+    
+    //         // Mengambil data SuratPeringatan dan menambahkan nama nasabah langsung ke objek
+    //         $suratPeringatanRaw = SuratPeringatan::select('surat_peringatans.*', 'nasabahs.nama')
+    //                             ->join('nasabahs', 'surat_peringatans.no', '=', 'nasabahs.no')
+    //                             ->where('surat_peringatans.id_account_officer', $idUser)
+    //                             ->whereNotNull('surat_peringatans.no')
+    //                             ->whereNull('surat_peringatans.bukti_gambar')
+    //                             ->get();
+            
+    
+    //         Log::info('Jabatan: account_officer - fetching Surat Peringatan for account_officer', ['id_account_officer' => $suratPeringatanRaw]);
+    
+    //         $suratPeringatan = $suratPeringatanRaw->unique('nama');
+        
+    //     return response()->json($suratPeringatan->values()->all(), 200);
+    //     } else {
+    //         return response()->json(['error' => 'Account Officer not found for this user'], 403);
+    //     }
+    // }
+    
+    
     public function updateSuratPeringatan(Request $request)
     {
         try {
@@ -70,58 +118,114 @@ class MobileSuratPeringatanController extends Controller
                 'no' => 'required|integer',
                 'tingkat' => 'required|integer',
                 'diserahkan' => 'required|date',
+                'kategori' => 'required|string|in:Peringatan,Somasi,Pendampingan', // Validasi kategori
                 'bukti_gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif', // Validate image file
             ]);
 
-            // Cari SuratPeringatan berdasarkan no dan tingkat
+            // Cari SuratPeringatan berdasarkan no, tingkat, dan kategori
             $suratPeringatan = SuratPeringatan::where('no', $validated['no'])
                 ->where('tingkat', $validated['tingkat'])
+                ->where('kategori', $validated['kategori']) // Tambahkan kategori ke pencarian
                 ->first();
 
             if (!$suratPeringatan) {
-                Log::error('SuratPeringatan tidak ditemukan untuk No: ' . $validated['no'] . ', Tingkat: ' . $validated['tingkat']);
-                return response()->json(['error' => 'Surat Peringatan belum tersedia untuk tingkat ini'], 404);
+                Log::error('Surat ' . $validated['kategori'] . ' tidak ditemukan untuk No: ' . $validated['no'] . ', Tingkat: ' . $validated['tingkat']);
+                return response()->json(['error' => 'Surat ' . $validated['kategori'] . ' belum tersedia untuk tingkat ini'], 404);
             }
 
             // Cek apakah sudah ada gambar
             if (!is_null($suratPeringatan->bukti_gambar)) {
-                Log::warning('Gambar sudah ada untuk SuratPeringatan No: ' . $validated['no'] . ', Tingkat: ' . $validated['tingkat']);
-                return response()->json(['error' => 'Surat Peringatan sudah ada untuk tingkat ini'], 400);
+                Log::warning('Gambar sudah ada untuk Surat ' . $validated['kategori'] . ' No: ' . $validated['no'] . ', Tingkat: ' . $validated['tingkat']);
+                return response()->json(['error' => 'Surat ' . $validated['kategori'] . ' sudah ada untuk tingkat ini'], 400);
             }
 
-            // Update tanggal
+            // Update tanggal dan kategori
             $suratPeringatan->diserahkan = $validated['diserahkan'];
+            $suratPeringatan->kategori = $validated['kategori'];
 
-            // Update gambar jika ada
-            // if ($request->hasFile('bukti_gambar')) {
-            //     $buktiGambar = $request->file('bukti_gambar');
-            //     $buktiGambarName = 'gambar_SP' . $validated['tingkat'] . '_' . $validated['no'] . '.' . $buktiGambar->getClientOriginalExtension();
-            //     $buktiGambarPath = $buktiGambar->storeAs('private/surat_peringatan', $buktiGambarName);
-            //     $suratPeringatan->bukti_gambar = $buktiGambarPath;
-
-            //     Log::info('File gambar berhasil diupdate: ' . $buktiGambarName);
-            // }
             if ($request->hasFile('bukti_gambar')) {
                 $buktiGambarPath = $request->file('bukti_gambar')->store('bukti_gambar', 'public');
-
                 $suratPeringatan->bukti_gambar = $buktiGambarPath;
-
-                Log::info('File gambar berhasil diupdate: ');
+                Log::info('File gambar berhasil diupdate untuk Surat ' . $validated['kategori']);
             }
+
             // Simpan perubahan
             $suratPeringatan->save();
 
-            Log::info('SuratPeringatan berhasil diupdate: ' . json_encode($suratPeringatan));
+            Log::info('Surat ' . $validated['kategori'] . ' berhasil diupdate: ' . json_encode($suratPeringatan));
 
             return response()->json($suratPeringatan, 200);
         } catch (ValidationException $e) {
             Log::error('Validasi gagal: ' . $e->getMessage());
             return response()->json(['error' => $e->errors()], 422);
         } catch (\Exception $e) {
-            Log::error('Terjadi kesalahan saat mengupdate surat peringatan: ' . $e->getMessage());
-            return response()->json(['error' => 'Terjadi kesalahan saat mengupdate surat peringatan.'], 500);
+            Log::error('Terjadi kesalahan saat mengupdate surat: ' . $e->getMessage());
+            return response()->json(['error' => 'Terjadi kesalahan saat mengupdate surat.'], 500);
         }
     }
+
+    // public function updateSuratPeringatan(Request $request)
+    // {
+    //     try {
+    //         // Log data yang diterima
+    //         Log::info('Data yang diterima untuk update SuratPeringatan: ' . json_encode($request->all()));
+
+    //         $validated = $request->validate([
+    //             'no' => 'required|integer',
+    //             'tingkat' => 'required|integer',
+    //             'diserahkan' => 'required|date',
+    //             'bukti_gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif', // Validate image file
+    //         ]);
+
+    //         // Cari SuratPeringatan berdasarkan no dan tingkat
+    //         $suratPeringatan = SuratPeringatan::where('no', $validated['no'])
+    //             ->where('tingkat', $validated['tingkat'])
+    //             ->first();
+
+    //         if (!$suratPeringatan) {
+    //             Log::error('SuratPeringatan tidak ditemukan untuk No: ' . $validated['no'] . ', Tingkat: ' . $validated['tingkat']);
+    //             return response()->json(['error' => 'Surat Peringatan belum tersedia untuk tingkat ini'], 404);
+    //         }
+
+    //         // Cek apakah sudah ada gambar
+    //         if (!is_null($suratPeringatan->bukti_gambar)) {
+    //             Log::warning('Gambar sudah ada untuk SuratPeringatan No: ' . $validated['no'] . ', Tingkat: ' . $validated['tingkat']);
+    //             return response()->json(['error' => 'Surat Peringatan sudah ada untuk tingkat ini'], 400);
+    //         }
+
+    //         // Update tanggal
+    //         $suratPeringatan->diserahkan = $validated['diserahkan'];
+
+    //         // Update gambar jika ada
+    //         // if ($request->hasFile('bukti_gambar')) {
+    //         //     $buktiGambar = $request->file('bukti_gambar');
+    //         //     $buktiGambarName = 'gambar_SP' . $validated['tingkat'] . '_' . $validated['no'] . '.' . $buktiGambar->getClientOriginalExtension();
+    //         //     $buktiGambarPath = $buktiGambar->storeAs('private/surat_peringatan', $buktiGambarName);
+    //         //     $suratPeringatan->bukti_gambar = $buktiGambarPath;
+
+    //         //     Log::info('File gambar berhasil diupdate: ' . $buktiGambarName);
+    //         // }
+    //         if ($request->hasFile('bukti_gambar')) {
+    //             $buktiGambarPath = $request->file('bukti_gambar')->store('bukti_gambar', 'public');
+
+    //             $suratPeringatan->bukti_gambar = $buktiGambarPath;
+
+    //             Log::info('File gambar berhasil diupdate: ');
+    //         }
+    //         // Simpan perubahan
+    //         $suratPeringatan->save();
+
+    //         Log::info('SuratPeringatan berhasil diupdate: ' . json_encode($suratPeringatan));
+
+    //         return response()->json($suratPeringatan, 200);
+    //     } catch (ValidationException $e) {
+    //         Log::error('Validasi gagal: ' . $e->getMessage());
+    //         return response()->json(['error' => $e->errors()], 422);
+    //     } catch (\Exception $e) {
+    //         Log::error('Terjadi kesalahan saat mengupdate surat peringatan: ' . $e->getMessage());
+    //         return response()->json(['error' => 'Terjadi kesalahan saat mengupdate surat peringatan.'], 500);
+    //     }
+    // }
 
 
 
